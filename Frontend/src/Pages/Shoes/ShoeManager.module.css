@@ -1,0 +1,16 @@
+.tableContainer {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+    padding: 1rem;
+  }
+  
+  .tableResponsive {
+    min-width: 600px; 
+  }
+  
+  @media (max-width: 535px) {
+    .tableResponsive {
+      min-width: 400px; 
+    }
+  }
+  

@@ -1,0 +1,26 @@
+.tableContainer {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+    padding: 1rem;
+  }
+  
+  .tableResponsive {
+    min-width: 1000px;
+  }
+  
+  .productImage {
+    width: 100px;
+  }
+  
+  .orderInfoCard {
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  @media (max-width: 576px) {
+    .tableResponsive {
+      min-width: 600px;
+    }
+  }
+  

@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+.navbar-wrapper {
+    position: relative;
+    margin-top: 56px;
+}
+/* Styles for the sliding message */
+.sliding-text {
+    background-color: #a21cff;
+    color: #fff; 
+    text-align: center;
+    font-size: 1.2rem; /* Default font size */
+    font-weight: bold;
+    padding: 10px 0;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Montserrat', sans-serif;
+    margin-top: 56px;
+    z-index: 1; /* Make sure the message is above the navbar */
+}
+
+.sliding-text::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: inherit;
+    z-index: 1;
+    animation: slideText 4s linear infinite;
+}
+
+/* Sliding text animation */
+@keyframes slideText {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+    .sliding-text {
+        font-size: 1rem; /* Smaller font size for medium screens (tablets, etc.) */
+    }
+}
+
+@media (max-width: 480px) {
+    .sliding-text {
+        font-size: 0.9rem; /* Even smaller font size for small screens (phones) */
+    }
+}
+
