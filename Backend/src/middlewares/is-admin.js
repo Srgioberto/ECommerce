@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 const userService = require('../services/user');
 const isAdmin = async (req, res, next) => {
-  console.log('req.session.jwt', req.session.jwt);
   try {
     if (!req.session?.jwt) {
       throw new Error('authentication is required');
@@ -12,7 +11,6 @@ const isAdmin = async (req, res, next) => {
     if (user.admin !== 1) {
       throw new Error('only admins can access this route');
     }
-    console.log('user is admin');
     next();
   } catch (err) {
     return res
