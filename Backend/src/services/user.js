@@ -1,6 +1,5 @@
 const bcrypt = require('bcrypt');
 const { User } = require('../config');
-const cartService = require('./cart');
 class UserService {
   async createUser(userData) {
     // Hash the password before saving
@@ -18,9 +17,6 @@ class UserService {
     });
     await user.save();
     delete user.password;
-
-    // TODO move this to 'on create' hook/trigger
-    await cartService.createCart(user.id);
 
     return {
       id: user.id,

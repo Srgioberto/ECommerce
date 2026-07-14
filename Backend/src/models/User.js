@@ -30,6 +30,13 @@ module.exports = (sequelize) => {
     },
   });
 
+  User.addHook('afterCreate', async (user) => {
+    // required lazily: services/cart requires config/index, which requires this
+    // file, so a top-level require here would create a circular dependency.
+    const cartService = require('../services/cart');
+    await cartService.createCart(user.id);
+  });
+
   //
   // example to check add methods. Not in use now but may be useful in the future
   // // Adding a class level method

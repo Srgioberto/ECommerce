@@ -14,7 +14,6 @@ const addProductToCart = async (req, res) => {
     const { id: cartId } = await cartService.findCartbyUserId(
       req.currentUser.id
     );
-    console.log('cartId', cartId);
 
     const updatedCart = await cartService.addProductToCart({
       ...req.body,
@@ -46,7 +45,6 @@ const removeProduct = async (req, res) => {
     const updatedCart = await cartService.removeProductFromCart({
       ...req.body,
       CartId: cartId,
-      userId: req.currentUser.id, //Not needed, delete if confirmed
     });
     res.status(200).send(updatedCart);
   } catch (err) {
