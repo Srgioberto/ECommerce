@@ -93,7 +93,7 @@ const ShoeForm = ({ onSubmit, initialData }) => {
   return (
     <>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
-        {initialData ? <p>Editing {initialData.name}</p> : <p>Creating new Product</p>}
+        {initialData ? <p className="sku mb-3">Editing {initialData.name}</p> : <p className="sku mb-3">Creating new product</p>}
         <div className="my-2">
           <label className="form-label" htmlFor="name">
             Model Name
@@ -174,8 +174,8 @@ const ShoeForm = ({ onSubmit, initialData }) => {
                 {errors.image && <small className="text-danger">{errors.image}</small>}
             </div> */}
 
-        <div className="m-3 text-end">
-          <button type="submit" className="btn btn-outline-secondary ">
+        <div className="mt-3 text-end">
+          <button type="submit" className="btn-stamp">
             {initialData ? "Update" : "Create"}
           </button>
         </div>

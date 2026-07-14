@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import TopNavbar from "../../Components/Header/TopNavbar";
 import Footer from "../../Components/Footer/Footer";
 import { useSelector } from "react-redux";
@@ -17,53 +17,48 @@ const Products = () => {
   const lastItemIndex = currentPage * perPage;
   const firstItemIndex = lastItemIndex - perPage;
 
+  const filtered = products.filter((item) =>
+    search.toLocaleLowerCase() === ""
+      ? item
+      : item.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
+  );
+
   return (
-    <Fragment>
+    <div className="page-shell">
       <TopNavbar />
-      <Container style={{ marginBottom: "5rem" }}>
-        <br/>
-        <div className="my-4">
-          <h4 className="mb-4">Showing All Shoes</h4>
-        </div>
-        <Form>
-          <InputGroup className="my-3">
-            <Form.Control
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by product name"
-            />
-          </InputGroup>
-        </Form>
-        <Row>
-          {products &&
-            products
-              .filter((item) => {
-                return search.toLocaleLowerCase() === ""
-                  ? item
-                  : item.name.toLocaleLowerCase().includes(search.toLocaleLowerCase());
-              })
-              .slice(firstItemIndex, lastItemIndex)
-              .map((p) => {
-                return (
-                  <Col xs={12} sm={6} md={4} lg={3} className="mb-4" key={p.id}>
-                    <ProductCard product={p} />
-                  </Col>
-                );
-              })}
-        </Row>
-        <Pagination
-          totalItems={products
-            .filter((item) => {
-              return search.toLocaleLowerCase() === ""
-                ? item
-                : item.name.toLocaleLowerCase().includes(search.toLocaleLowerCase());
-            }).length}
-          perPage={perPage}
-          setCurrentPage={setCurrentPage}
-          currentPage={currentPage}
-        />
-      </Container>
+      <main className="page-main">
+        <Container className="my-4 pb-5">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow">Full catalog</span>
+              <h2>All shoes</h2>
+            </div>
+          </div>
+          <Form>
+            <InputGroup className="mb-4">
+              <Form.Control
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search by product name"
+              />
+            </InputGroup>
+          </Form>
+          <Row className="g-3">
+            {filtered.slice(firstItemIndex, lastItemIndex).map((p) => (
+              <Col xs={6} sm={6} md={4} lg={3} key={p.id}>
+                <ProductCard product={p} />
+              </Col>
+            ))}
+          </Row>
+          <Pagination
+            totalItems={filtered.length}
+            perPage={perPage}
+            setCurrentPage={setCurrentPage}
+            currentPage={currentPage}
+          />
+        </Container>
+      </main>
       <Footer />
-    </Fragment>
+    </div>
   );
 };
 

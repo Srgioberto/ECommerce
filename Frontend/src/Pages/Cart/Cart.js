@@ -1,13 +1,14 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import TopNavbar from "../../Components/Header/TopNavbar";
 import Footer from "../../Components/Footer/Footer";
 import { useDispatch, useSelector } from "react-redux";
-import { Container, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import CartItemCard from "../../Components/Cart/CartItemCard";           /* Cart */
+import CartItemCard from "../../Components/Cart/CartItemCard";
 import { cartFetch, emptyCart } from "../../Redux/Cart/CartSlice";
 import store from "../../Redux/Store";
 import { productsFetch } from "../../Redux/Product/ProductSlice";
+import "./Cart.css";
 
 const Cart = () => {
   const cart = useSelector((state) => state.cart);
@@ -43,72 +44,80 @@ const Cart = () => {
   };
 
   return (
-    <Fragment>
+    <div className="page-shell">
       <TopNavbar />
-      <Container style={{ marginBottom: "4rem" }}> {/* Aquí se agrega el margin-bottom */}
-        <Row>
+      <main className="page-main">
+        <Container className="pb-5">
           {!cart.CartItems.length && (
             <div className="m-auto w-100 text-center my-5">
-              <h1 className="text-danger">(0o0) Nothing on the cart yet!</h1>
-              <Link to="/" className="text-dark text-decoration-none fs-5">
-                Return to Buy!
+              <span className="eyebrow d-block mb-2 justify-content-center">Empty bag</span>
+              <h1>Nothing in your cart yet</h1>
+              <Link to="/home" className="btn-stamp d-inline-flex mt-3">
+                Start shopping
               </Link>
             </div>
           )}
           {cart.CartItems.length > 0 && (
-            <div className="cart-container">
-              <h2>Shopping Cart</h2>
-              <div className="titles">
-                <h3 className="product-title">Product</h3>
-                <h3 className="price">Price</h3>
-                <h3 className="quantity">Quantity</h3>
-                <h3 className="total">Total</h3>
-              </div>
-              
-              <div className="cart-items">
-                {cart.CartItems.map((cartItem) => {
-                  return (
-                    <div key={cartItem.ProductId}>
-                      <CartItemCard cartItem={cartItem} reportOutOfStock={handleOutOfStock} />
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="cart-summary">
-                <button className="clear-btn" onClick={handleClear}>
-                  Clear Cart
-                </button>
-                <div className="cart-checkout">
-                  <div className="total">
-                    <span>Total</span>
-                    <span className="amount">${cart.total}</span>
-                  </div>
-                  <hr />
-                  {outOfStock ? (
-                    <>
-                      <button disabled style={{ backgroundColor: "gray" }}>
-                        Checkout
-                      </button>
-                      <p>Item(s) in your cart have 0 stock to sell, please remove them and refresh</p>
-                    </>
-                  ) : (
-                    <button onClick={handleBuy} style={{ backgroundColor: "#a21cff", color: "#fff" }}>
-                      Checkout
-                    </button>
-                  )}
-                  <div className="continue-shopping">
-                    <Link to="/home">
-                      <span> Continue Shopping</span>
-                    </Link>
-                  </div>
+            <>
+              <div className="section-heading">
+                <div>
+                  <span className="eyebrow">{cart.CartItems.length} item(s)</span>
+                  <h2>Shopping bag</h2>
                 </div>
               </div>
-            </div>
+              <Row className="g-4">
+                <Col lg={8}>
+                  <div className="cart-list">
+                    <div className="cart-list-head">
+                      <span>Product</span>
+                      <span>Price</span>
+                      <span>Quantity</span>
+                      <span className="text-end">Total</span>
+                    </div>
+                    <div className="perforation" />
+                    {cart.CartItems.map((cartItem) => (
+                      <CartItemCard key={cartItem.ProductId} cartItem={cartItem} reportOutOfStock={handleOutOfStock} />
+                    ))}
+                  </div>
+                </Col>
+                <Col lg={4}>
+                  <div className="cart-summary receipt-edge">
+                    <span className="eyebrow">Order summary</span>
+                    <div className="cart-summary-total">
+                      <span>Total</span>
+                      <span className="font-display">${cart.total}</span>
+                    </div>
+                    <p className="cart-summary-note">Shipping and taxes calculated at checkout.</p>
+
+                    {outOfStock ? (
+                      <>
+                        <button className="btn-stamp w-100" disabled>
+                          Checkout
+                        </button>
+                        <p className="cart-summary-warning">
+                          Item(s) in your bag have 0 stock to sell — please remove them and refresh.
+                        </p>
+                      </>
+                    ) : (
+                      <button className="btn-stamp w-100" onClick={handleBuy}>
+                        Checkout
+                      </button>
+                    )}
+                    <button className="btn-outline w-100 mt-2" onClick={handleClear}>
+                      Clear bag
+                    </button>
+                    <Link to="/home" className="cart-continue">
+                      &larr; Continue shopping
+                    </Link>
+                  </div>
+                </Col>
+              </Row>
+            </>
           )}
-        </Row>
-      </Container>
+        </Container>
+      </main>
       <Footer />
-    </Fragment>
+    </div>
   );
 };
 

@@ -1,60 +1,69 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
-import { Card } from "react-bootstrap";
+import { Card, Col, Container, Row } from "react-bootstrap";
 import TopNavbar from "../../Components/Header/TopNavbar";
 import Footer from "../../Components/Footer/Footer";
 import CartCheckoutForm from "../../Components/Cart/CartCheckoutForm";
 import CartItemCheck from "../../Components/Cart/CartItemCheck";
-import styles from "./cartCheckout.module.css"
+import styles from "./cartCheckout.module.css";
 
 const CartCheckout = () => {
   const cart = useSelector((state) => state.cart);
   return (
-    <Fragment>
+    <div className="page-shell">
       <TopNavbar />
-      <h1 className="text-center mt-5 ">Cart CheckOut</h1>
-      <div className="row mx-1 container-fluid" style={{ marginBottom: "5rem" }}>
-        <div className="col-12 col-lg-6 mt-5">
-          <Card>
-            <Card.Body>
-              <div className={styles.cartContainer} style={{ padding: 0 }}>
-                <div className={styles.titles}>
-                  <h5 className="product-title">Product</h5>
-                  <h5 className="price">Price</h5>
-                  <h5 className="quantity">Quantity</h5>
-                  <h5 className="total">Total</h5>
-                </div>
-                {cart.CartItems &&
-                  cart.CartItems.map((cartItem) => {
-                    return (
-                      <div key={cartItem.ProductId}>
-                        <CartItemCheck cartItem={cartItem} styles={styles} />
-                      </div>
-                    );
-                  })}
-              </div>
-              <div className={styles.cartCheckout}>
-                <div className={styles.cartCheckoutTotal}>
-                  <span>Total price of the Order:</span>
-                  <span className="amount">${cart.total}</span>
-                </div>
-              </div>
-            </Card.Body>
-          </Card>
-        </div>
+      <main className="page-main">
+        <Container className="pb-5">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow">Step 2 of 2</span>
+              <h2>Checkout</h2>
+            </div>
+          </div>
+          <Row className="g-4">
+            <Col xs={12} lg={6}>
+              <Card>
+                <Card.Body>
+                  <span className="eyebrow d-block mb-3">Order summary</span>
+                  <div className={styles.cartContainer} style={{ padding: 0 }}>
+                    <div className={styles.titles}>
+                      <span>Product</span>
+                      <span>Price</span>
+                      <span>Qty</span>
+                      <span>Total</span>
+                    </div>
+                    {cart.CartItems &&
+                      cart.CartItems.map((cartItem) => {
+                        return (
+                          <div key={cartItem.ProductId}>
+                            <CartItemCheck cartItem={cartItem} styles={styles} />
+                          </div>
+                        );
+                      })}
+                  </div>
+                  <div className={styles.cartCheckout}>
+                    <div className={styles.cartCheckoutTotal}>
+                      <span>Total price of the order</span>
+                      <span className="font-display">${cart.total}</span>
+                    </div>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
 
-        <div className="col-12 col-lg-6 mt-5 order-lg-1 order-0" data-bs-theme="dark">
-          <Card>
-            <Card.Body>
-              <Card.Title className="text-center">Order Shipping Data</Card.Title>
-              <CartCheckoutForm />
-            </Card.Body>
-          </Card>
-        </div>
-      </div>
-
+            <Col xs={12} lg={6}>
+              <Card>
+                <Card.Body>
+                  <span className="eyebrow d-block mb-3">Shipping details</span>
+                  <CartCheckoutForm />
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
+      </main>
       <Footer />
-    </Fragment>
+    </div>
   );
 };
 

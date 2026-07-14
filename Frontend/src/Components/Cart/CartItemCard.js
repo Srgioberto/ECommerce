@@ -47,28 +47,24 @@ const CartItemCard = ({ cartItem, reportOutOfStock }) => {
   };
 
   return (
-    <div className="cart-item">
-      <div className="cart-product">
+    <div className="cart-row">
+      <div className="cart-row-product">
         <img src={`../img/products/${image}`} alt={name} />
         <div>
           <h3>{name}</h3>
-          {stock < 1 ? (
-            <p style={{ backgroundColor: 'red', borderRadius: '30px', textAlign: 'center' }}>
-              Stock available: {stock}
-            </p>
-          ) : (
-            <p>Stock available: {stock}</p>
-          )}
-          <button onClick={handleRemove}>Remove</button>
+          <span className={`tag-badge ${stock < 1 ? "tag-badge--stamp" : "tag-badge--court"}`}>
+            {stock < 1 ? "Out of stock" : `${stock} in stock`}
+          </span>
+          <button className="cart-row-remove" onClick={handleRemove}>Remove</button>
         </div>
       </div>
-      <div className="cart-product-price">${price}</div>
-      <div className="cart-product-quantity">
-        <button onClick={handleMinusQty}>-</button>
-        <div className="count">{cartItem.qty}</div>
-        <button onClick={handleAddQty}>+</button>
+      <div className="cart-row-price">${price}</div>
+      <div className="cart-row-qty">
+        <button onClick={handleMinusQty} aria-label="Decrease quantity">-</button>
+        <span>{cartItem.qty}</span>
+        <button onClick={handleAddQty} aria-label="Increase quantity">+</button>
       </div>
-      <div className="cart-product-total-price">${cartItem.price * cartItem.qty}</div>
+      <div className="cart-row-total">${cartItem.price * cartItem.qty}</div>
     </div>
   );
 };

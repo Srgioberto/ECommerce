@@ -17,10 +17,8 @@ const CartItemCheck = ({cartItem, styles}) => {
   return (
     <div className={styles.cartItem}>
       <div className={styles.cartProduct}>
-        
-        <div><img src={`../img/products/${image}`} alt={name} />
-          <h5>{name}</h5>
-        </div>
+        <img src={`../img/products/${image}`} alt={name} />
+        <h5>{name}</h5>
       </div>
       <div className={styles.cartProductPrice}>${price}</div>
       <div className={styles.count}>{cartItem.qty}</div>
@@ -28,7 +26,7 @@ const CartItemCheck = ({cartItem, styles}) => {
         ${cartItem.price * cartItem.qty}
       </div>
     </div>
-      
+
   )
 }
 

@@ -1,9 +1,66 @@
-.custom-card {
+.stride-category-card {
+  position: relative;
+  display: block;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--kraft);
+  text-decoration: none;
+  color: var(--ink);
+  box-shadow: var(--shadow-tag);
   height: 100%;
-  background: #fafcfc;
-  box-shadow: 10px 10px 20px #bebebe, -10px -10px 20px #ffffff;
-  border: none;
-  text-align: center;
-  font-size: 20px;
-  font-weight: 500;
+}
+
+.stride-category-media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--kraft-dark);
+}
+
+.stride-category-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.stride-category-card:hover .stride-category-media img {
+  transform: scale(1.06);
+}
+
+.stride-category-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(20, 19, 15, 0) 45%, rgba(20, 19, 15, 0.78) 100%);
+}
+
+.stride-category-fallback {
+  width: 100%;
+  height: 100%;
+  background: var(--kraft-dark);
+}
+
+.stride-category-label {
+  position: absolute;
+  left: 1.1rem;
+  right: 1.1rem;
+  bottom: 1rem;
+  z-index: 1;
+}
+
+.stride-category-label .eyebrow {
+  color: var(--kraft);
+}
+
+.stride-category-label .eyebrow::before {
+  background: var(--kraft);
+}
+
+.stride-category-label p {
+  margin: 0.3rem 0 0;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--paper);
+  letter-spacing: 0.02em;
 }

@@ -61,12 +61,12 @@ const ShoeList = ({ shoes, onEdit, onDelete }) => {
                     <td>{shoe.stock}</td>
                     <td>{categories.find((c) => c.id === shoe.CategoryId).name}</td>
                     <td className="text-center">
-                      <Button variant="outline-warning" onClick={() => onEdit(shoe)}>
+                      <button className="btn-outline btn-sm" onClick={() => onEdit(shoe)}>
                         Edit
-                      </Button>
-                      <Button variant="outline-danger" onClick={() => handleShow(shoe)} className="ms-2">
+                      </button>
+                      <button className="btn-stamp btn-sm ms-2" onClick={() => handleShow(shoe)}>
                         Delete
-                      </Button>
+                      </button>
                     </td>
                   </tr>
                 ))

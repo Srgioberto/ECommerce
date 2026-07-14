@@ -1,9 +1,9 @@
-import React from "react"; 
-import { Container, Image, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import React from "react";
+import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink } from "react-router-dom";
 import { logOut } from "../../Redux/User/UserSlice";
-import './TopNavbar.css'; 
+import './TopNavbar.css';
 
 const TopNavbar = () => {
   const { user } = useSelector((state) => state.user);
@@ -17,19 +17,16 @@ const TopNavbar = () => {
 
   return (
     <div className="navbar-wrapper">
-      <Navbar bg="dark" expand="lg" variant="dark" className="fixed-top"> 
+      <Navbar expand="lg" className="stride-navbar" fixed="top">
         <Container>
-          <NavLink to="/home" className="navbar-brand">
-            <Image
-              src="../img/Nike.png"
-              alt="Logo"
-              style={{ height: "30px" }} // Adjust the height of the logo as needed
-            />
+          <NavLink to="/home" className="stride-brand">
+            <span className="stride-brand-mark" aria-hidden="true" />
+            STRIDE
           </NavLink>
           <Navbar.Toggle aria-controls="basic-navbar-nav" className="ms-auto" />
           {user && (
             <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="ms-auto">
+              <Nav className="ms-auto align-items-lg-center">
                 <NavLink to="/home" className="nav-link">
                   Home
                 </NavLink>
@@ -63,8 +60,9 @@ const TopNavbar = () => {
                 )}
                 {!user.admin && (
                   <>
-                    <NavLink to="/Cart" className="nav-link">
-                      Cart ({cart.CartItems.length})
+                    <NavLink to="/Cart" className="nav-link stride-cart-link">
+                      Cart
+                      <span className="stride-cart-count">{cart.CartItems.length}</span>
                     </NavLink>
                     <NavDropdown title="User" id="basic-nav-dropdown">
                       <Link to="/Profile" className="text-capitalize dropdown-item">
@@ -81,10 +79,13 @@ const TopNavbar = () => {
           )}
         </Container>
       </Navbar>
-      {/* Render sliding text only if user is not admin */}
-      {!user.admin && (
+      {/* Render sliding text only for logged-in, non-admin users */}
+      {user && !user.admin && (
         <div className="sliding-text">
-          Free Shipping on all orders over $200
+          <div className="sliding-text-track">
+            <span>Free shipping on all orders over $200</span>
+            <span>Free shipping on all orders over $200</span>
+          </div>
         </div>
       )}
     </div>

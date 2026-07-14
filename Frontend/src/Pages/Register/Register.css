@@ -1,18 +1,27 @@
 .register-container {
-    height: 100vh;
+    min-height: calc(100vh - 66px);
     position: relative;
     background-size: cover;
     background-position: center;
-    background-image: url('/public/img/Login/Login.jpg');
-    padding-top: 5vh; /* Espacio en la parte superior para el Navbar */
+    background-image: linear-gradient(rgba(20, 19, 15, 0.6), rgba(20, 19, 15, 0.6)), url('/public/img/Login/Login.jpg');
+    padding-top: 5vh;
+    padding-bottom: 5vh;
+}
+
+.register-card {
+    background-color: var(--paper);
+    color: var(--ink);
+    border: none;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-pop);
+}
+
+.register-card h2 {
+    text-transform: none;
 }
 
 @media (max-width: 576px) {
     .register-container {
-        padding: 1rem; 
-    }
-
-    .login-card {
-        padding: 1.5rem; 
+        padding: 1rem;
     }
 }

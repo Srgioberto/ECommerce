@@ -1,57 +1,149 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
-
 .navbar-wrapper {
-    position: relative;
-    margin-top: 56px;
+  position: relative;
+  margin-top: 66px; /* clears the fixed navbar, whose own height flows outside the document */
 }
-/* Styles for the sliding message */
+
+/* ---- brand bar --------------------------------------------------- */
+
+.stride-navbar {
+  background: var(--ink);
+  height: 66px;
+  border-bottom: 1px solid rgba(247, 245, 239, 0.1);
+}
+
+.stride-navbar .container {
+  height: 100%;
+  align-items: center;
+}
+
+.stride-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  letter-spacing: 0.06em;
+  color: var(--paper) !important;
+  text-decoration: none;
+}
+
+.stride-brand-mark {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--stamp);
+}
+
+.stride-navbar .navbar-toggler {
+  border-color: rgba(247, 245, 239, 0.35);
+}
+
+.stride-navbar .navbar-toggler-icon {
+  filter: invert(1);
+}
+
+.stride-navbar .nav-link,
+.stride-navbar .dropdown-toggle {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(247, 245, 239, 0.72) !important;
+  padding: 0.5rem 1rem !important;
+  transition: color 0.15s ease;
+}
+
+.stride-navbar .nav-link:hover,
+.stride-navbar .nav-link.active,
+.stride-navbar .dropdown-toggle:hover {
+  color: var(--paper) !important;
+}
+
+.stride-navbar .dropdown-menu {
+  background: var(--ink);
+  border: 1px solid rgba(247, 245, 239, 0.14);
+  border-radius: var(--radius-sm);
+}
+
+.stride-navbar .dropdown-item {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: rgba(247, 245, 239, 0.8);
+}
+
+.stride-navbar .dropdown-item:hover,
+.stride-navbar .dropdown-item:focus {
+  background: rgba(247, 245, 239, 0.08);
+  color: var(--paper);
+}
+
+.stride-cart-link {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.stride-cart-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 50%;
+  background: var(--stamp);
+  color: var(--paper);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+}
+
+/* ---- kraft ticker --------------------------------------------------- */
+
 .sliding-text {
-    background-color: #a21cff;
-    color: #fff; 
-    text-align: center;
-    font-size: 1.2rem; /* Default font size */
-    font-weight: bold;
-    padding: 10px 0;
-    position: relative;
-    overflow: hidden;
-    font-family: 'Montserrat', sans-serif;
-    margin-top: 56px;
-    z-index: 1; /* Make sure the message is above the navbar */
+  background: var(--kraft);
+  color: var(--ink);
+  height: 34px;
+  overflow: hidden;
+  position: relative;
 }
 
-.sliding-text::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background-color: inherit;
-    z-index: 1;
-    animation: slideText 4s linear infinite;
+.sliding-text-track {
+  display: flex;
+  width: max-content;
+  height: 100%;
+  align-items: center;
+  animation: slideText 16s linear infinite;
 }
 
-/* Sliding text animation */
+.sliding-text-track span {
+  flex-shrink: 0;
+  padding: 0 2rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
 @keyframes slideText {
-    0% {
-        transform: translateX(100%);
-    }
-    100% {
-        transform: translateX(-100%);
-    }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
-/* Media query for smaller screens */
-@media (max-width: 768px) {
-    .sliding-text {
-        font-size: 1rem; /* Smaller font size for medium screens (tablets, etc.) */
-    }
+@media (prefers-reduced-motion: reduce) {
+  .sliding-text-track {
+    animation: none;
+  }
 }
 
-@media (max-width: 480px) {
-    .sliding-text {
-        font-size: 0.9rem; /* Even smaller font size for small screens (phones) */
-    }
+@media (max-width: 991px) {
+  .stride-navbar .dropdown-menu {
+    background: transparent;
+    border: none;
+  }
 }
-

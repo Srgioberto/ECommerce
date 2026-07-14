@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { Button, Card, Col, Container, Form, Image, Modal, Navbar, Row, Spinner } from "react-bootstrap";
+import { Button, Card, Col, Container, Form, Modal, Navbar, Row, Spinner } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import "./Register.css";
 import Footer from "../../Components/Footer/Footer";
@@ -137,23 +137,21 @@ const Register = () => {
 
   return (
     <Fragment>
-      <Navbar bg="dark" expand="lg" variant="dark">
+      <Navbar className="auth-navbar">
         <Container>
-          <Link to="/" className="navbar-brand">
-            <Image
-              src="../img/Nike.png"
-              alt="Logo"
-              style={{ height: "30px" }} // Ajusta la altura del logo según lo necesites
-            />
+          <Link to="/" className="stride-brand">
+            <span className="stride-brand-mark" aria-hidden="true" />
+            STRIDE
           </Link>
         </Container>
       </Navbar>
       <Container fluid className="register-container">
         <Row className="justify-content-md-center">
           <Col xs={12} md={6}>
-            <Card className="bg-dark text-white">
+            <Card className="register-card">
               <Card.Body>
-                <h2 className="mb-4">Register</h2>
+                <span className="eyebrow">New account</span>
+                <h2 className="mt-2 mb-4">Create your profile</h2>
                 <Form onSubmit={handleSubmit}>
                   <Row>
                     <Col xs={12} md={6}>
@@ -241,26 +239,19 @@ const Register = () => {
                       </Form.Group>
                     </Col>
                   </Row>
-                  <Button
-                    variant="primary"
-                    type="submit"
-                    className="mt-3"
-                    disabled={isLoading}
-                    style={{ backgroundColor: "#a21cff", border: "none" }}
-                  >
+                  <button type="submit" className="btn-stamp mt-3" disabled={isLoading}>
                     {isLoading ? (
                       <>
                         <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
                         Registering...
                       </>
                     ) : (
-                      "Register"
+                      "Create account"
                     )}
-                  </Button>
+                  </button>
                 </Form>
-                <br />
-                <Link to="/login" style={{ textDecoration: "none" }}>
-                  Already have an account? Go Log in!
+                <Link to="/login" className="login-alt-link mt-4 d-inline-block">
+                  Already have an account? Log in
                 </Link>
               </Card.Body>
             </Card>

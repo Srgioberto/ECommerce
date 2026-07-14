@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import TopNavbar from "../../../Components/Header/TopNavbar";
-import { Button, Col, Container, Image, Row } from "react-bootstrap";
+import { Col, Container, Image, Row } from "react-bootstrap";
 import Footer from "../../../Components/Footer/Footer";
 import "./ProductDetails.css";
 import { addItem } from "../../../Redux/Cart/CartSlice";
@@ -58,84 +58,92 @@ const ProductDetails = () => {
     dispatch(addItem(data));
   };
 
-  return (
-    <Fragment>
-      <TopNavbar />
-      <Container style={{ marginBottom: "6rem" }}>
-        {product ? (
-          <Row className="my-5">
-            <Col md={6} sm={12}>
-              <br />
-              <div className="img-container p-3">
-                <Image className="single-img" src={`../img/products/${product.image}`} />
-              </div>
-            </Col>
-            <Col md={6} sm={12}>
-              <br />
-              <div className="px-4">
-                <h2>{product.name}</h2>
-                <h4 className="py-2 fs-5">
-                  Category:{" "}
-                  <Link to={`/Category/${category}`} className="text-capitalize text-decoration-none">
-                    {category}
-                  </Link>
-                </h4>
-                <h4 className="py-2">Price: ${product.price}</h4>
-                <p>Available Stock: {product.stock}</p>
+  const inStock = product && product.stock > 0;
+  const lowStock = inStock && product.stock <= 5;
 
-                {product.stock < 1 ? (
-                  <h3>Out of stock</h3>
-                ) : (
-                  <>
-                    {!user.admin ? (
-                      <>
-                        <div className="d-flex mb-3">
-                          <Button className="btn btn-sm btn-dark fs-6 me-3 text-center" onClick={decreaseQty}>
-                            -
-                          </Button>
-                          <input
-                            type="number"
-                            className="form-control text-center w-auto p-0 m-0"
-                            value={quantity}
-                            readOnly={true}
-                            required={true}
-                          />
-                          <Button className="btn btn-sm btn-dark fs-6 ms-3 text-center" onClick={increaseQty}>
-                            +
-                          </Button>
-                        </div>
-                        <div className="">
-                          <Button
-                            variant="dark"
-                            className="me-2"
-                            onClick={handleAddToCart}
-                            style={{ backgroundColor: "#a61cf8", color: "white", border: "none" }}
-                          >
-                            Add To Cart
-                          </Button>
-                        </div>
-                      </>
+  return (
+    <div className="page-shell">
+      <TopNavbar />
+      <main className="page-main">
+        <Container className="pb-5">
+          {product ? (
+            <Row className="my-4 g-4 align-items-start">
+              <Col md={6} sm={12}>
+                <div className="pd-img-container">
+                  <Image className="pd-single-img" src={`../img/products/${product.image}`} />
+                </div>
+              </Col>
+              <Col md={6} sm={12}>
+                <div className="pd-info">
+                  {category && (
+                    <Link to={`/Category/${category}`} className="eyebrow text-capitalize text-decoration-none">
+                      {category}
+                    </Link>
+                  )}
+                  <h1 className="pd-title">{product.name}</h1>
+                  <div className="d-flex align-items-center gap-3 mb-3">
+                    <span className="sku">SKU-{String(product.id).padStart(4, "0")}</span>
+                    {product.stock < 1 ? (
+                      <span className="tag-badge tag-badge--stamp">Sold out</span>
                     ) : (
-                      <Link to="/shoes">
-                        <Button>Go to Manage Products</Button>
-                      </Link>
+                      <span className={`tag-badge ${lowStock ? "tag-badge--stamp" : "tag-badge--court"}`}>
+                        {lowStock ? `Only ${product.stock} left` : `${product.stock} in stock`}
+                      </span>
                     )}
-                  </>
-                )}
-              </div>
-            </Col>
-          </Row>
-        ) : (
-          <div className="m-auto w-100 text-center my-5">
-            <h1 className="text-danger">(0o0) Product Not Found</h1>
-            <Link to="/Home" className="text-dark text-decoration-none fs-5">
-              Return to Home Page
-            </Link>
-          </div>
-        )}
-      </Container>
+                  </div>
+                  <p className="pd-price">${product.price}</p>
+
+                  <div className="perforation my-4" />
+
+                  {product.stock < 1 ? (
+                    <p className="pd-outofstock">This style is currently out of stock.</p>
+                  ) : (
+                    <>
+                      {!user.admin ? (
+                        <>
+                          <span className="form-label d-block mb-2">Quantity</span>
+                          <div className="pd-qty mb-4">
+                            <button type="button" onClick={decreaseQty} aria-label="Decrease quantity">
+                              &minus;
+                            </button>
+                            <input
+                              type="number"
+                              value={quantity}
+                              readOnly={true}
+                              required={true}
+                              aria-label="Quantity"
+                            />
+                            <button type="button" onClick={increaseQty} aria-label="Increase quantity">
+                              +
+                            </button>
+                          </div>
+                          <button className="btn-stamp" onClick={handleAddToCart}>
+                            Add to cart
+                          </button>
+                        </>
+                      ) : (
+                        <Link to="/shoes" className="btn-ink">
+                          Go to manage products
+                        </Link>
+                      )}
+                    </>
+                  )}
+                </div>
+              </Col>
+            </Row>
+          ) : (
+            <div className="m-auto w-100 text-center my-5">
+              <span className="eyebrow">404</span>
+              <h1 className="mt-2">Product not found</h1>
+              <Link to="/Home" className="btn-ink d-inline-flex mt-3">
+                Return to home
+              </Link>
+            </div>
+          )}
+        </Container>
+      </main>
       <Footer />
-    </Fragment>
+    </div>
   );
 };
 

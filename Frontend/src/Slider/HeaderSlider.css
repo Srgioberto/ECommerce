@@ -1,0 +1,98 @@
+.stride-hero {
+  position: relative;
+  height: 84vh;
+  min-height: 560px;
+  max-height: 820px;
+  overflow: hidden;
+  background: var(--ink);
+}
+
+.stride-hero-carousel,
+.stride-hero-carousel .carousel-inner,
+.stride-hero-carousel .carousel-item {
+  height: 100%;
+}
+
+.stride-hero-carousel img {
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.05) contrast(1.02);
+}
+
+.stride-hero-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    0deg,
+    rgba(20, 19, 15, 0.92) 0%,
+    rgba(20, 19, 15, 0.55) 38%,
+    rgba(20, 19, 15, 0.15) 65%
+  );
+  pointer-events: none;
+}
+
+.stride-hero-copy {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0 1.5rem 3.5rem;
+  max-width: 720px;
+  margin: 0 auto;
+  color: var(--paper);
+  text-align: left;
+}
+
+.stride-hero-copy .eyebrow {
+  color: var(--kraft);
+}
+
+.stride-hero-copy .eyebrow::before {
+  background: var(--kraft);
+}
+
+.stride-hero-copy h1 {
+  color: var(--paper);
+  font-size: clamp(2.1rem, 5vw, 3.6rem);
+  line-height: 1.05;
+  margin: 0.85rem 0 1rem;
+  text-transform: none;
+  max-width: 14ch;
+}
+
+.stride-hero-copy p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(247, 245, 239, 0.78);
+  max-width: 46ch;
+  margin-bottom: 1.75rem;
+}
+
+.stride-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.stride-hero-outline {
+  color: var(--paper) !important;
+  border-color: rgba(247, 245, 239, 0.55) !important;
+}
+
+.stride-hero-outline:hover {
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+}
+
+@media (max-width: 991px) {
+  .stride-hero {
+    height: 74vh;
+    min-height: 480px;
+  }
+}
+
+@media (max-width: 576px) {
+  .stride-hero-copy {
+    padding: 0 1.25rem 2.5rem;
+  }
+}

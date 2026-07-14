@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Footer from "../../Components/Footer/Footer";
 import TopNavbar from "../../Components/Header/TopNavbar";
-import { Button, Card, Table } from "react-bootstrap";
+import { Card, Col, Container, Row, Table } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import store from "../../Redux/Store";
@@ -33,70 +33,77 @@ const UserProfile = () => {
   const firstItemIndex = lastItemIndex - perPage;
 
   return (
-    <div> 
+    <div className="page-shell">
       <TopNavbar />
-      <div style={{ marginBottom: "6rem" }}>
-        <h1 className="m-4 text-center">My Profile</h1>
-        <div className="d-flex flex-column flex-lg-row justify-content-start m-2">
-          {user ? (
-            <Card className="m-2" style={{ width: "18rem" }}>
-              <Card.Body>
-                <Card.Title className="text-center">My account details</Card.Title>
-                <hr />
-                <Card.Text>
-                  <strong>Name:</strong> {user.firstName} {user.lastName}
-                  <br />
-                  <strong>Email:</strong> {user.email}
-                  <br />
-                  <strong>Phone:</strong> {user.phone}
-                </Card.Text>
-              </Card.Body>
-            </Card>
-          ) : (
-            <div className="alert alert-warning m-2">User not found</div>
-          )}
+      <main className="page-main">
+        <Container className="pb-5">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow">Account</span>
+              <h2>My profile</h2>
+            </div>
+          </div>
+          <Row className="g-3">
+            <Col lg={4}>
+              {user ? (
+                <Card>
+                  <Card.Body>
+                    <span className="eyebrow">Details</span>
+                    <p className="mt-2 mb-1"><strong>Name:</strong> {user.firstName} {user.lastName}</p>
+                    <p className="mb-1"><strong>Email:</strong> {user.email}</p>
+                    <p className="mb-0"><strong>Phone:</strong> {user.phone}</p>
+                  </Card.Body>
+                </Card>
+              ) : (
+                <div className="alert alert-warning">User not found</div>
+              )}
+            </Col>
 
-          <Card className="m-2 flex-grow-1">
-            <Card.Body>
-              <Card.Title>My Orders</Card.Title>
-              <div style={{ overflowX: "auto" }}>
-                <Table striped bordered hover>
-                  <thead>
-                    <tr>
-                      <th>N° of the Order</th>
-                      <th>Date</th>
-                      <th>Status</th>
-                      <th>Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {orders &&
-                      orders.Orders.slice(firstItemIndex, lastItemIndex).map((item) => (
-                        <tr key={item.id}>
-                          <td>
-                            <Button variant="outline-info" onClick={() => handleShowDetail(item.id)}>
-                              #{item.id}
-                            </Button>
-                          </td>
-                          <td>{item.date.slice(0, 16).replace("T", " ")}</td>
-                          <td>{item.status}</td>
-                          <td>${item.total}</td>
+            <Col lg={8}>
+              <Card>
+                <Card.Body>
+                  <span className="eyebrow">History</span>
+                  <p className="mt-2 mb-3 fw-bold" style={{ fontFamily: "var(--font-display)", textTransform: "none" }}>My orders</p>
+                  <div style={{ overflowX: "auto" }}>
+                    <Table striped bordered hover>
+                      <thead>
+                        <tr>
+                          <th>Order</th>
+                          <th>Date</th>
+                          <th>Status</th>
+                          <th>Total</th>
                         </tr>
-                      ))}
-                  </tbody>
-                </Table>
-              </div>
-              <Pagination
-                totalItems={orders.Orders.length}
-                perPage={perPage}
-                setCurrentPage={setCurrentPage}
-                currentPage={currentPage}
-              />
-            </Card.Body>
-          </Card>
-        </div>
-        <Footer />
-      </div>
+                      </thead>
+                      <tbody>
+                        {orders &&
+                          orders.Orders.slice(firstItemIndex, lastItemIndex).map((item) => (
+                            <tr key={item.id}>
+                              <td>
+                                <button className="btn-outline" onClick={() => handleShowDetail(item.id)}>
+                                  #{item.id}
+                                </button>
+                              </td>
+                              <td className="font-mono">{item.date.slice(0, 16).replace("T", " ")}</td>
+                              <td className="text-capitalize">{item.status}</td>
+                              <td>${item.total}</td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </Table>
+                  </div>
+                  <Pagination
+                    totalItems={orders.Orders.length}
+                    perPage={perPage}
+                    setCurrentPage={setCurrentPage}
+                    currentPage={currentPage}
+                  />
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
+      </main>
+      <Footer />
     </div>
   );
 };

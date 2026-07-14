@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { Form, Button, Container, Row, Col, Card, Navbar, Image, Spinner, Modal } from "react-bootstrap";
+import { Form, Button, Container, Row, Col, Card, Navbar, Spinner, Modal } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import Footer from "../../Components/Footer/Footer";
 import "./Login.css";
@@ -55,21 +55,23 @@ const Login = () => {
 
   return (
     <Fragment>
-      <Navbar bg="dark" expand="lg" variant="dark">
+      <Navbar className="auth-navbar">
         <Container>
-          <Link to="/" className="navbar-brand">
-            <Image src="../img/Nike.png" alt="Logo" style={{ height: "30px" }} />
+          <Link to="/" className="stride-brand">
+            <span className="stride-brand-mark" aria-hidden="true" />
+            STRIDE
           </Link>
         </Container>
       </Navbar>
-      <div className="login-container d-flex flex-column min-vh-100"> {/* Agregamos d-flex y min-vh-100 */}
-        <Container fluid className="flex-fill"> {/* Flex-fill para que ocupe el espacio disponible */}
+      <div className="login-container d-flex flex-column min-vh-100">
+        <Container fluid className="flex-fill">
           <Row className="w-100">
-          <Col xs={10} sm={8} md={6} lg={4} className="left-align"> {/* Elimina mx-auto */}
+          <Col xs={10} sm={8} md={6} lg={4} className="left-align">
               <Card className="p-4 shadow-lg login-card">
                 <Card.Body>
-                  <h3 className="text-center mb-4">Welcome back!</h3>
-                  <p className="text-center mb-4">Please sign in with your account.</p>
+                  <span className="eyebrow">Members</span>
+                  <h3 className="mt-2 mb-1">Welcome back</h3>
+                  <p className="mb-4 text-ink-faint">Sign in to pick up where you left off.</p>
                   <Form onSubmit={handleLogin}>
                     <Form.Group>
                       <Form.Label>Email</Form.Label>
@@ -93,12 +95,7 @@ const Login = () => {
                         required
                       />
                     </Form.Group>
-                    <Button
-                      id="button-login"
-                      type="submit"
-                      className="w-100 mt-4"
-                      style={{ backgroundColor: "#a21cff", border: "none" }}
-                    >
+                    <button id="button-login" type="submit" className="btn-stamp w-100 mt-4">
                       {isLoading ? (
                         <>
                           <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
@@ -107,11 +104,10 @@ const Login = () => {
                       ) : (
                         "Log in"
                       )}
-                    </Button>
+                    </button>
                   </Form>
-                  <br />
-                  <Link to={"/Register"} style={{ textDecoration: "none" }}>
-                    New? Sign in right now!
+                  <Link to={"/Register"} className="login-alt-link mt-4 d-inline-block">
+                    New here? Create an account
                   </Link>
                 </Card.Body>
               </Card>

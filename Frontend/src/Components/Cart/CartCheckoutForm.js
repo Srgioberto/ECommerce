@@ -140,9 +140,9 @@ const CartCheckoutForm = () => {
         {errors.country && <small className="text-danger">{errors.country}</small>}
       </div>
 
-      <div className="m-3 text-end">
-        <button type="submit" className="btn btn-outline-secondary ">
-          Create
+      <div className="mt-3 text-end">
+        <button type="submit" className="btn-stamp">
+          Place order
         </button>
       </div>
     </form>

@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import TopNavbar from "../Components/Header/TopNavbar";
 import Footer from "../Components/Footer/Footer";
 import HeaderSlider from "../Slider/HeaderSlider";
@@ -7,15 +7,15 @@ import LatestProducts from "../Components/Product/LatestProducts";
 
 const Home = () => {
   return (
-    <Fragment>
+    <div className="page-shell">
       <TopNavbar />
-      <div style={{ marginBottom: "6rem" }}> {/* Aquí se agrega el margin-bottom */}
+      <main className="page-main" style={{ paddingTop: 0 }}>
         <HeaderSlider />
         <AllCategories />
         <LatestProducts />
-      </div>
+      </main>
       <Footer />
-    </Fragment>
+    </div>
   );
 };
 
