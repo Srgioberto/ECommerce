@@ -35,6 +35,7 @@
 }
 
 .media {
+  position: relative;
   aspect-ratio: 1 / 1;
   overflow: hidden;
   background: var(--paper-dim);
@@ -49,6 +50,51 @@
   height: 100%;
   object-fit: contain;
   transition: transform 0.35s ease;
+}
+
+.quickAdd {
+  position: absolute;
+  right: 0.65rem;
+  bottom: 0.65rem;
+  z-index: 2;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.45rem 0.7rem;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.25s ease, transform 0.25s ease, background 0.15s ease;
+}
+
+.quickAdd:hover {
+  background: var(--stamp);
+}
+
+.quickAdd:active {
+  transform: translateY(8px) scale(0.94);
+}
+
+.card:hover .quickAdd {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.card:hover .quickAdd:active {
+  transform: translateY(0) scale(0.94);
+}
+
+@media (hover: none) {
+  .quickAdd {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .perforation {

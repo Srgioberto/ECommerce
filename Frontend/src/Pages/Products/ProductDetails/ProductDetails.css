@@ -8,6 +8,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  animation: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .pd-single-img {
@@ -19,6 +20,7 @@
 
 .pd-info {
   padding: 0 0.5rem;
+  animation: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
 }
 
 .pd-title {
@@ -60,6 +62,10 @@
 
 .pd-qty button:hover {
   background: var(--kraft);
+}
+
+.pd-qty button:active {
+  transform: scale(0.9);
 }
 
 .pd-qty input {

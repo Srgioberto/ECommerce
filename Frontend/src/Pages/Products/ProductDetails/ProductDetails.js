@@ -6,6 +6,7 @@ import { Col, Container, Image, Row } from "react-bootstrap";
 import Footer from "../../../Components/Footer/Footer";
 import "./ProductDetails.css";
 import { addItem } from "../../../Redux/Cart/CartSlice";
+import { useCartDrawer } from "../../../Components/CartDrawer/CartDrawerContext";
 
 const ProductDetails = () => {
   const { categories } = useSelector((state) => state.categories);
@@ -16,6 +17,7 @@ const ProductDetails = () => {
   let [category, setCategory] = useState(null);
   const { products } = useSelector((state) => state.products);
   const dispatch = useDispatch();
+  const cartDrawer = useCartDrawer();
 
   // Increase item quantity, but not above the available stock value
   const increaseQty = (e) => {
@@ -55,7 +57,7 @@ const ProductDetails = () => {
       cartItem,
       mode: "normal",
     };
-    dispatch(addItem(data));
+    dispatch(addItem(data)).finally(() => cartDrawer?.openDrawer());
   };
 
   const inStock = product && product.stock > 0;

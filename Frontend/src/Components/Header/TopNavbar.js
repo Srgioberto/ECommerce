@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink } from "react-router-dom";
 import { logOut } from "../../Redux/User/UserSlice";
+import { useCartDrawer } from "../CartDrawer/CartDrawerContext";
 import './TopNavbar.css';
 
 const TopNavbar = () => {
@@ -10,14 +11,37 @@ const TopNavbar = () => {
   const dispatch = useDispatch();
   const { categories } = useSelector((state) => state.categories);
   const cart = useSelector((state) => state.cart);
+  const cartDrawer = useCartDrawer();
+  const [scrolled, setScrolled] = useState(false);
+  const [bump, setBump] = useState(false);
+  const prevCount = useRef(cart.CartItems.length);
 
   const handleLogout = () => {
     dispatch(logOut());
   };
 
+  // Give the navbar a tighter, elevated look once the page scrolls.
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 12);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Bounce the cart badge whenever the item count grows.
+  useEffect(() => {
+    if (cart.CartItems.length > prevCount.current) {
+      setBump(true);
+      const timeout = setTimeout(() => setBump(false), 450);
+      prevCount.current = cart.CartItems.length;
+      return () => clearTimeout(timeout);
+    }
+    prevCount.current = cart.CartItems.length;
+  }, [cart.CartItems.length]);
+
   return (
     <div className="navbar-wrapper">
-      <Navbar expand="lg" className="stride-navbar" fixed="top">
+      <Navbar expand="lg" className={`stride-navbar ${scrolled ? "is-scrolled" : ""}`} fixed="top">
         <Container>
           <NavLink to="/home" className="stride-brand">
             <span className="stride-brand-mark" aria-hidden="true" />
@@ -60,10 +84,16 @@ const TopNavbar = () => {
                 )}
                 {!user.admin && (
                   <>
-                    <NavLink to="/Cart" className="nav-link stride-cart-link">
+                    <button
+                      type="button"
+                      className="nav-link stride-cart-link"
+                      onClick={cartDrawer?.openDrawer}
+                    >
                       Cart
-                      <span className="stride-cart-count">{cart.CartItems.length}</span>
-                    </NavLink>
+                      <span className={`stride-cart-count ${bump ? "is-bumping" : ""}`}>
+                        {cart.CartItems.length}
+                      </span>
+                    </button>
                     <NavDropdown title="User" id="basic-nav-dropdown">
                       <Link to="/Profile" className="text-capitalize dropdown-item">
                         Profile

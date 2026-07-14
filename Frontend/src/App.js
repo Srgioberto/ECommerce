@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import Home from "./Pages/Home";
 import { Navigate, Route, Routes } from "react-router-dom";
 import NotFound from "./Pages/NotFound";
@@ -17,11 +16,13 @@ import axios from "axios";
 import Register from "./Pages/Register/Register";
 import ProtectedRoutesAdmin from "./ProtectedRoutes/ProtectedRoutesAdmin";
 import ProtectedRoutesUser from "./ProtectedRoutes/ProtectedRoutesUser";
+import { CartDrawerProvider } from "./Components/CartDrawer/CartDrawerContext";
+import CartDrawer from "./Components/CartDrawer/CartDrawer";
 axios.defaults.withCredentials = true;
 
 function App() {
   return (
-    <Fragment>
+    <CartDrawerProvider>
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
@@ -43,7 +44,8 @@ function App() {
 
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </Fragment>
+      <CartDrawer />
+    </CartDrawerProvider>
   );
 }
 

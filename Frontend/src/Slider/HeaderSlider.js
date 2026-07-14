@@ -27,13 +27,17 @@ const HeaderSlider = () => {
         <div className="stride-hero-scrim" aria-hidden="true" />
 
         <div className="stride-hero-copy">
-          <span className="eyebrow">SS26 collection &middot; style code STR-0026</span>
-          <h1>Built for the next mile, the next drop, the next block.</h1>
-          <p>
+          <span className="eyebrow stride-hero-in" style={{ animationDelay: "0.1s" }}>
+            SS26 collection &middot; style code STR-0026
+          </span>
+          <h1 className="stride-hero-in" style={{ animationDelay: "0.22s" }}>
+            Built for the next mile, the next drop, the next block.
+          </h1>
+          <p className="stride-hero-in" style={{ animationDelay: "0.34s" }}>
             Six categories, one bench: running, basketball, football, skate,
             training and street. Every pair tagged, priced and ready to ship.
           </p>
-          <div className="stride-hero-actions">
+          <div className="stride-hero-actions stride-hero-in" style={{ animationDelay: "0.46s" }}>
             <Link to="/Products" className="btn-stamp">Shop the range</Link>
             <a href="#categories" className="btn-outline stride-hero-outline">Browse categories</a>
           </div>

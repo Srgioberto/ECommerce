@@ -25,7 +25,10 @@ const CategoryCard = ({ category }) => {
       </div>
       <div className="stride-category-label">
         <span className="eyebrow">Shop</span>
-        <p className="text-capitalize">{category}</p>
+        <p className="text-capitalize">
+          {category}
+          <span className="stride-category-arrow" aria-hidden="true">&rarr;</span>
+        </p>
       </div>
     </Link>
   );

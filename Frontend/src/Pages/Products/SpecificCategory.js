@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import ProductCard from "../../Components/Product/Card/ProductCard";
 import { useSelector } from "react-redux";
 import Pagination from "../../Components/Pagination/Pagination";
+import Reveal from "../../Components/Reveal/Reveal";
 
 const SpecificCategory = () => {
   const [search, setSearch] = useState("");
@@ -47,9 +48,11 @@ const SpecificCategory = () => {
             </InputGroup>
           </Form>
           <Row className="g-3">
-            {filtered.slice(firstItemIndex, lastItemIndex).map((product) => (
+            {filtered.slice(firstItemIndex, lastItemIndex).map((product, index) => (
               <Col xs={6} sm={6} md={4} lg={3} key={product.id}>
-                <ProductCard product={product} />
+                <Reveal delay={(index % 8) * 50} style={{ height: "100%" }}>
+                  <ProductCard product={product} />
+                </Reveal>
               </Col>
             ))}
           </Row>

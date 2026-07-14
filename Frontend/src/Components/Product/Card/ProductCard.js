@@ -1,13 +1,34 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styles from "./ProductCard.module.css";
+import { addItem } from "../../../Redux/Cart/CartSlice";
+import { useCartDrawer } from "../../CartDrawer/CartDrawerContext";
 
 const ProductCard = ({ product }) => {
   const { categories } = useSelector((state) => state.categories);
   const category = categories.find((element) => element.id === product.CategoryId);
   const inStock = product.stock > 0;
   const lowStock = inStock && product.stock <= 5;
+  const dispatch = useDispatch();
+  const cartDrawer = useCartDrawer();
+  const [adding, setAdding] = useState(false);
+
+  const handleQuickAdd = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!inStock || adding) return;
+    setAdding(true);
+    dispatch(
+      addItem({
+        cartItem: { ProductId: product.id, price: product.price, qty: 1 },
+        mode: "normal",
+      })
+    ).finally(() => {
+      setAdding(false);
+      cartDrawer?.openDrawer();
+    });
+  };
 
   return (
     <Fragment>
@@ -15,6 +36,17 @@ const ProductCard = ({ product }) => {
         <div className={styles.tagHole} aria-hidden="true" />
         <div className={styles.media}>
           <img src={`../img/products/${product.image}`} alt={product.name} />
+          {inStock && (
+            <button
+              type="button"
+              className={styles.quickAdd}
+              onClick={handleQuickAdd}
+              disabled={adding}
+              aria-label={`Quick add ${product.name} to bag`}
+            >
+              {adding ? "..." : "+ Bag"}
+            </button>
+          )}
         </div>
         <div className={styles.perforation} />
         <div className={styles.body}>

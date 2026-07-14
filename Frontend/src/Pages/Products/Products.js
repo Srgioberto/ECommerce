@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 import ProductCard from "../../Components/Product/Card/ProductCard";
 import Pagination from "../../Components/Pagination/Pagination";
+import Reveal from "../../Components/Reveal/Reveal";
 
 const Products = () => {
   const [search, setSearch] = useState("");
@@ -43,9 +44,11 @@ const Products = () => {
             </InputGroup>
           </Form>
           <Row className="g-3">
-            {filtered.slice(firstItemIndex, lastItemIndex).map((p) => (
+            {filtered.slice(firstItemIndex, lastItemIndex).map((p, index) => (
               <Col xs={6} sm={6} md={4} lg={3} key={p.id}>
-                <ProductCard product={p} />
+                <Reveal delay={(index % 8) * 50} style={{ height: "100%" }}>
+                  <ProductCard product={p} />
+                </Reveal>
               </Col>
             ))}
           </Row>

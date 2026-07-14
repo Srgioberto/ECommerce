@@ -9,6 +9,12 @@
   background: var(--ink);
   height: 66px;
   border-bottom: 1px solid rgba(247, 245, 239, 0.1);
+  transition: box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.stride-navbar.is-scrolled {
+  box-shadow: 0 12px 30px -18px rgba(0, 0, 0, 0.6);
+  background: var(--ink);
 }
 
 .stride-navbar .container {
@@ -82,6 +88,9 @@
   display: inline-flex !important;
   align-items: center;
   gap: 0.4rem;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .stride-cart-count {
@@ -96,6 +105,7 @@
   color: var(--paper);
   font-family: var(--font-mono);
   font-size: 0.68rem;
+  transform-origin: center;
 }
 
 /* ---- kraft ticker --------------------------------------------------- */

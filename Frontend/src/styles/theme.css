@@ -35,6 +35,10 @@
 
 /* ---- base ---------------------------------------------------------- */
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--paper);
   color: var(--ink);
@@ -70,6 +74,32 @@ a {
 .page-main {
   flex: 1 1 auto;
   padding-top: 2rem;
+  animation: page-fade-in 0.5s ease both;
+}
+
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---- scroll reveal --------------------------------------------------- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* ---- eyebrow / sku label ---------------------------------------------- */
@@ -127,6 +157,11 @@ a {
   transform: translateY(-1px);
 }
 
+.btn-stamp:active:not(:disabled) {
+  transform: translateY(0) scale(0.96) rotate(-0.6deg);
+  transition-duration: 0.08s;
+}
+
 .btn-stamp:disabled {
   background: var(--ink-faint);
   border-color: var(--ink-faint);
@@ -157,6 +192,12 @@ a {
   opacity: 0.85;
   color: var(--paper);
   transform: translateY(-1px);
+}
+
+.btn-ink:active,
+.btn-outline:active {
+  transform: scale(0.96);
+  transition-duration: 0.08s;
 }
 
 .btn-outline {
@@ -345,10 +386,51 @@ textarea:focus-visible {
   outline-offset: 2px;
 }
 
+/* ---- shared motion keyframes ------------------------------------------- */
+
+@keyframes bump {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.35);
+  }
+  60% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.is-bumping {
+  animation: bump 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   * {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
   }
 }
