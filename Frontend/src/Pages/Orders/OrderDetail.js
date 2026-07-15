@@ -5,6 +5,7 @@ import TopNavbar from "../../Components/Header/TopNavbar";
 import Footer from "../../Components/Footer/Footer";
 import { useSelector } from "react-redux";
 import styles from './OrderList.module.css';
+import { getProductImageUrl } from "../../utils/productImage";
 
 const OrderDetail = () => {
   const { id } = useParams();
@@ -66,6 +67,7 @@ const OrderDetail = () => {
                     <tr>
                       <th>Product</th>
                       <th>Name</th>
+                      <th>Size</th>
                       <th>Quantity</th>
                       <th>Price</th>
                       <th>Total</th>
@@ -78,11 +80,12 @@ const OrderDetail = () => {
                           <td>
                             <img
                               className={styles.productImage}
-                              src={`../img/products/${products.find((p) => p.id === item.ProductId).image}`}
+                              src={getProductImageUrl(products.find((p) => p.id === item.ProductId).image)}
                               alt={item.name}
                             />
                           </td>
                           <td>{products.find((p) => p.id === item.ProductId).name}</td>
+                          <td>{item.size || "—"}</td>
                           <td>{item.qty}</td>
                           <td>${item.price}</td>
                           <td>${item.qty * item.price}</td>

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { addItem, removeItem } from "../../Redux/Cart/CartSlice";
 import { useCartDrawer } from "./CartDrawerContext";
+import { getProductImageUrl } from "../../utils/productImage";
 import "./CartDrawer.css";
 
 const CartDrawer = () => {
@@ -12,6 +13,11 @@ const CartDrawer = () => {
   const dispatch = useDispatch();
 
   const getProduct = (id) => products.find((p) => p.id === parseInt(id));
+
+  const getAvailableStock = (product, size) => {
+    const sizeEntry = size && Array.isArray(product.sizes) ? product.sizes.find((s) => s.size === size) : null;
+    return sizeEntry ? sizeEntry.stock : product.stock;
+  };
 
   return (
     <>
@@ -41,12 +47,15 @@ const CartDrawer = () => {
               {cart.CartItems.map((item, index) => {
                 const product = getProduct(item.ProductId);
                 if (!product) return null;
+                const availableStock = getAvailableStock(product, item.size);
                 return (
-                  <div className="cart-drawer-row" style={{ "--i": index }} key={item.ProductId}>
-                    <img src={`../img/products/${product.image}`} alt={product.name} />
+                  <div className="cart-drawer-row" style={{ "--i": index }} key={`${item.ProductId}-${item.size ?? ""}`}>
+                    <img src={getProductImageUrl(product.image)} alt={product.name} />
                     <div className="cart-drawer-row-info">
                       <p className="cart-drawer-row-name">{product.name}</p>
-                      <span className="sku">${item.price} &times; {item.qty}</span>
+                      <span className="sku">
+                        {item.size && `Size ${item.size} · `}${item.price} &times; {item.qty}
+                      </span>
                       <div className="cart-drawer-qty">
                         <button
                           type="button"
@@ -58,7 +67,7 @@ const CartDrawer = () => {
                         <span>{item.qty}</span>
                         <button
                           type="button"
-                          onClick={() => item.qty < product.stock && dispatch(addItem({ cartItem: item, mode: "plus" }))}
+                          onClick={() => item.qty < availableStock && dispatch(addItem({ cartItem: item, mode: "plus" }))}
                           aria-label="Increase quantity"
                         >
                           +

@@ -1,5 +1,6 @@
 const dotenv = require('dotenv');
 dotenv.config();
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const bodyParse = require('body-parser');
@@ -16,6 +17,7 @@ app.use(
   })
 );
 app.use(bodyParse.json());
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 app.use(
   cookieSession({
@@ -30,6 +32,15 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/api', apiRouter);
+
+// Catches errors thrown by middleware (e.g. multer rejecting an oversized or
+// non-image upload) so the client gets a JSON error instead of an opaque
+// HTML 500 page that axios can't parse.
+app.use((err, req, res, next) => {
+  if (!err) return next();
+  console.error(err);
+  res.status(400).json({ error: err.message || 'Request failed' });
+});
 
 const port = process.env.PORT || 3000;
 

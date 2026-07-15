@@ -19,13 +19,16 @@ const ShoeManager = () => {
     });
   }, [dispatch]);
 
-  const addShoe = (shoe) => {
-    dispatch(createProduct(shoe));
-  };
+  const addShoe = (shoe) => dispatch(createProduct(shoe));
 
   const updateShoe = (updatedShoe) => {
-    dispatch(updateProduct(updatedShoe));
-    setCurrentShoe(null);
+    const result = dispatch(updateProduct(updatedShoe));
+    result.then((action) => {
+      if (updateProduct.fulfilled.match(action)) {
+        setCurrentShoe(null);
+      }
+    });
+    return result;
   };
 
   const deleteShoe = (id) => {

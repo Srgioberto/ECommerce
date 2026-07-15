@@ -37,12 +37,23 @@ class OrderService {
           price: product.price,
           OrderId: order.id,
           ProductId: Item.ProductId,
+          size: Item.size,
         });
         //save the OrderItem
         await orderItemData.save();
 
-        //We decrease the product stock by the quantity sold
-        await product.decrement({ stock: Item.qty });
+        //We decrease the product stock by the quantity sold. If the product
+        //tracks stock per size, decrement that size's entry (and keep the
+        //flat total in sync); otherwise fall back to the flat total.
+        if (Item.size && Array.isArray(product.sizes) && product.sizes.length > 0) {
+          const updatedSizes = product.sizes.map((s) =>
+            s.size === Item.size ? { ...s, stock: Math.max(0, s.stock - Item.qty) } : s
+          );
+          const newTotal = updatedSizes.reduce((sum, s) => sum + s.stock, 0);
+          await product.update({ sizes: updatedSizes, stock: newTotal });
+        } else {
+          await product.decrement({ stock: Item.qty });
+        }
       });
 
       //Once done with all the OrderItems we empty the cart and return the order

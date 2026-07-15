@@ -4,12 +4,14 @@ import { useDispatch, useSelector } from "react-redux";
 import styles from "./ProductCard.module.css";
 import { addItem } from "../../../Redux/Cart/CartSlice";
 import { useCartDrawer } from "../../CartDrawer/CartDrawerContext";
+import { getProductImageUrl, getProductSizes } from "../../../utils/productImage";
 
 const ProductCard = ({ product }) => {
   const { categories } = useSelector((state) => state.categories);
   const category = categories.find((element) => element.id === product.CategoryId);
   const inStock = product.stock > 0;
   const lowStock = inStock && product.stock <= 5;
+  const hasSizes = getProductSizes(product).length > 0;
   const dispatch = useDispatch();
   const cartDrawer = useCartDrawer();
   const [adding, setAdding] = useState(false);
@@ -35,8 +37,8 @@ const ProductCard = ({ product }) => {
       <Link to={`/Product/${product.id}`} className={styles.card}>
         <div className={styles.tagHole} aria-hidden="true" />
         <div className={styles.media}>
-          <img src={`../img/products/${product.image}`} alt={product.name} />
-          {inStock && (
+          <img src={getProductImageUrl(product.image)} alt={product.name} />
+          {inStock && !hasSizes && (
             <button
               type="button"
               className={styles.quickAdd}

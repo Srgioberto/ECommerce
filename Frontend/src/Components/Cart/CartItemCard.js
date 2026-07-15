@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItem, removeItem } from '../../Redux/Cart/CartSlice';
+import { getProductImageUrl } from '../../utils/productImage';
 
 const CartItemCard = ({ cartItem, reportOutOfStock }) => {
   let [name, setName] = useState(null);
@@ -15,8 +16,13 @@ const CartItemCard = ({ cartItem, reportOutOfStock }) => {
     setName(result.name);
     setPrice(result.price);
     setImage(result.image);
-    setStock(result.stock);
-    reportOutOfStock(result.stock === 0);
+    // If this line item has a size, cap quantity to that size's own stock
+    // rather than the product's overall total.
+    const sizeEntry =
+      cartItem.size && Array.isArray(result.sizes) ? result.sizes.find((s) => s.size === cartItem.size) : null;
+    const availableStock = sizeEntry ? sizeEntry.stock : result.stock;
+    setStock(availableStock);
+    reportOutOfStock(availableStock === 0);
   }, [cartItem, products, reportOutOfStock]);
 
   const handleRemove = (e) => {
@@ -49,9 +55,10 @@ const CartItemCard = ({ cartItem, reportOutOfStock }) => {
   return (
     <div className="cart-row">
       <div className="cart-row-product">
-        <img src={`../img/products/${image}`} alt={name} />
+        <img src={getProductImageUrl(image)} alt={name} />
         <div>
           <h3>{name}</h3>
+          {cartItem.size && <span className="sku d-block mb-1">Size {cartItem.size}</span>}
           <span className={`tag-badge ${stock < 1 ? "tag-badge--stamp" : "tag-badge--court"}`}>
             {stock < 1 ? "Out of stock" : `${stock} in stock`}
           </span>

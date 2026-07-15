@@ -1,3 +1,7 @@
+# Uploaded product photos (runtime data, not source)
+public/uploads/*
+!public/uploads/.gitkeep
+
 # Logs
 logs
 *.log

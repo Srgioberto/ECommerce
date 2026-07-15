@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const { isAdmin } = require('../middlewares/is-admin');
+const { upload } = require('../middlewares/upload');
 const {
   createProduct,
   updateProduct,
@@ -11,8 +12,8 @@ const router = Router();
 
 router.use('/admin', isAdmin);
 
-router.post('/admin/products', createProduct);
-router.put('/admin/products/:id', updateProduct);
+router.post('/admin/products', upload.single('image'), createProduct);
+router.put('/admin/products/:id', upload.single('image'), updateProduct);
 router.delete('/admin/products/:id', deleteProduct);
 
 router.get('/admin/orders', getOrders);

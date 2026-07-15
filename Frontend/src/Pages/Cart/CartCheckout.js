@@ -35,7 +35,7 @@ const CartCheckout = () => {
                     {cart.CartItems &&
                       cart.CartItems.map((cartItem) => {
                         return (
-                          <div key={cartItem.ProductId}>
+                          <div key={`${cartItem.ProductId}-${cartItem.size ?? ""}`}>
                             <CartItemCheck cartItem={cartItem} styles={styles} />
                           </div>
                         );

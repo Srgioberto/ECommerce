@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal, Spinner } from "react-bootstrap";
 import { useSelector } from "react-redux";
+import { getProductImageUrl } from "../../utils/productImage";
 
 const ShoeForm = ({ onSubmit, initialData }) => {
   const { categories } = useSelector((state) => state.categories);
@@ -10,85 +11,116 @@ const ShoeForm = ({ onSubmit, initialData }) => {
     price: "",
     stock: "",
     CategoryId: "",
-    //image: null,
   });
+  const [sizes, setSizes] = useState([]);
+  const [sizeDraft, setSizeDraft] = useState({ size: "", stock: "" });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
-  //const [imagePreview, setImagePreview] = useState(null);
+
+  // Modal walks through: 'confirm' (edit only) -> submitting -> 'success' | 'error'
+  const [modalStep, setModalStep] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
     if (initialData) {
-      setFormData({ ...initialData /*, image: null*/ });
+      setFormData({
+        name: initialData.name,
+        price: initialData.price,
+        stock: initialData.stock,
+        CategoryId: initialData.CategoryId,
+      });
+      setSizes(Array.isArray(initialData.sizes) ? initialData.sizes : []);
+      setImagePreview(getProductImageUrl(initialData.image));
+      setImageFile(null);
     } else {
-      setFormData({ name: "", price: "", stock: "", CategoryId: "" /*, image: null*/ });
+      setFormData({ name: "", price: "", stock: "", CategoryId: "" });
+      setSizes([]);
+      setImagePreview(null);
+      setImageFile(null);
     }
+    setSizeDraft({ size: "", stock: "" });
   }, [initialData]);
 
   const handleChage = (e) => {
-    const { name, value /*, files*/ } = e.target;
-
-    if (name === "image") {
-      // const file = files[0];
-      // setFormData({...formData, [name]: file});
-      // // setFormData({...formData, [name]: files[0]});
-      // setImagePreview(URL.createObjectURL(file));
-      // console.log(imagePreview);
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
     setErrors({ ...errors, [name]: "" });
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+    setErrors({ ...errors, image: "" });
+  };
+
+  const handleAddSize = () => {
+    const size = sizeDraft.size.trim();
+    const stock = parseInt(sizeDraft.stock, 10);
+    if (!size || isNaN(stock) || stock < 0) return;
+    if (sizes.some((s) => s.size === size)) {
+      setSizes(sizes.map((s) => (s.size === size ? { ...s, stock } : s)));
+    } else {
+      setSizes([...sizes, { size, stock }]);
+    }
+    setSizeDraft({ size: "", stock: "" });
+  };
+
+  const handleRemoveSize = (size) => {
+    setSizes(sizes.filter((s) => s.size !== size));
   };
 
   const validateForm = () => {
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = "El nombre del Modelo es Obligatorio.";
     if (!formData.price) newErrors.price = "El Precio es Obligatorio.";
-    if (!formData.stock) newErrors.stock = "La Cantidad en Stock es Obligatoria.";
+    if (sizes.length === 0 && !formData.stock) newErrors.stock = "La Cantidad en Stock es Obligatoria.";
     if (!formData.CategoryId || formData.CategoryId === "none") newErrors.category = "La Categoría es Obligatoria";
-    //if   (!formData.image) newErrors.image = 'La Imagen es Obligatoria.';
+    if (!initialData && !imageFile) newErrors.image = "La Imagen es Obligatoria.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  // Actually performs the create/update call and waits for the real result
+  // before telling the admin it worked - a failed upload used to still show
+  // "success" and silently corrupt the product list.
+  const submit = (id) => {
+    setSubmitting(true);
+    setSubmitError("");
+    onSubmit({ ...formData, sizes, imageFile, id })
+      .unwrap()
+      .then(() => {
+        setSubmitting(false);
+        setModalStep("success");
+      })
+      .catch((err) => {
+        setSubmitting(false);
+        setSubmitError(typeof err === "string" ? err : "Something went wrong. Please try again.");
+        setModalStep("error");
+      });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    // const data = new FormData();
-    // data.append('name', formData.name);
-    // data.append('price', formData.price);
-    // data.append('stock', formData.stock);
-    // data.append('category', formData.category);
-    // if (formData.image){
-    //     data.append('image', formData.image);
-    // }
-    // onSubmit(data);
     if (initialData) {
-      setCreation(false);
-      handleShow();
+      setModalStep("confirm");
     } else {
-      setCreation(true);
-      onSubmit({ ...formData, image: "default.png" });
-      handleShow();
+      submit(undefined);
     }
-    //setImagePreview(null);
   };
-
-  //Modal
-  const [creation, setCreation] = useState(true);
-  const [show, setShow] = useState(false);
-
-  const handleClose = () => {
-    setFormData({ name: "", price: "", stock: "", category: "" /*, image: null*/ });
-    setShow(false);
-  };
-  const handleShow = () => setShow(true);
 
   const handleConfirm = (e) => {
     e.preventDefault();
-    onSubmit({ ...formData, id: initialData?.id });
-    handleClose();
+    submit(initialData?.id);
   };
+
+  const handleClose = () => setModalStep(null);
 
   return (
     <>
@@ -128,16 +160,17 @@ const ShoeForm = ({ onSubmit, initialData }) => {
 
         <div className="mt-2">
           <label className="form-label" htmlFor="stock">
-            Stock
+            Stock {sizes.length > 0 && <span className="text-muted">(auto: sum of sizes)</span>}
           </label>
           <input
             type="number"
             id="stock"
             name="stock"
-            value={formData.stock}
+            value={sizes.length > 0 ? sizes.reduce((sum, s) => sum + (parseInt(s.stock, 10) || 0), 0) : formData.stock}
             onChange={handleChage}
             className="form-control"
             placeholder="Available Stock"
+            disabled={sizes.length > 0}
           />
           {errors.stock && <small className="text-danger">{errors.stock}</small>}
         </div>
@@ -168,43 +201,122 @@ const ShoeForm = ({ onSubmit, initialData }) => {
           {errors.category && <small className="text-danger">{errors.category}</small>}
         </div>
 
-        {/* <div className='mt-2'>
-                <label className='from-label' htmlFor='image'>Imagen de la Zapatilla</label>
-                <input type='file' id='image' name='image' onChange={handleChage} className='form-control mt-2' accept='image/*'/>
-                {errors.image && <small className="text-danger">{errors.image}</small>}
-            </div> */}
+        <div className="mt-3">
+          <label className="form-label">Sizes</label>
+          {sizes.length > 0 && (
+            <div className="d-flex flex-wrap gap-2 mb-2">
+              {sizes.map((s) => (
+                <span key={s.size} className="tag-badge">
+                  {s.size}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveSize(s.size)}
+                    aria-label={`Remove size ${s.size}`}
+                    style={{ border: "none", background: "none", marginLeft: "0.35rem", cursor: "pointer" }}
+                  >
+                    &times;
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+          <div className="d-flex gap-2">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Size (e.g. 42)"
+              value={sizeDraft.size}
+              onChange={(e) => setSizeDraft({ ...sizeDraft, size: e.target.value })}
+            />
+            <input
+              type="number"
+              min="0"
+              className="form-control"
+              placeholder="Stock for this size"
+              value={sizeDraft.stock}
+              onChange={(e) => setSizeDraft({ ...sizeDraft, stock: e.target.value })}
+            />
+            <button type="button" className="btn-outline btn-sm" onClick={handleAddSize} style={{ flexShrink: 0 }}>
+              Add
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-3">
+          <label className="form-label" htmlFor="image">
+            Product Photo
+          </label>
+          <input
+            type="file"
+            id="image"
+            name="image"
+            onChange={handleImageChange}
+            className="form-control"
+            accept="image/*"
+          />
+          {errors.image && <small className="text-danger">{errors.image}</small>}
+          {imagePreview && (
+            <div className="mt-2 p-2" style={{ background: "var(--paper-dim)", borderRadius: "var(--radius-sm)", width: "fit-content" }}>
+              <img src={imagePreview} alt="Preview" style={{ height: "100px", width: "100px", objectFit: "contain" }} />
+            </div>
+          )}
+        </div>
 
         <div className="mt-3 text-end">
-          <button type="submit" className="btn-stamp">
-            {initialData ? "Update" : "Create"}
+          <button type="submit" className="btn-stamp" disabled={submitting}>
+            {submitting ? (
+              <>
+                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" /> Saving...
+              </>
+            ) : initialData ? (
+              "Update"
+            ) : (
+              "Create"
+            )}
           </button>
         </div>
       </form>
-      <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
-        {creation ? (
-          <>
-            <Modal.Header closeButton>
-              <Modal.Title>Creation success</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>Succesfully created product.</Modal.Body>
-            <Modal.Footer>
-              <Button variant="primary" onClick={handleClose}>
-                Understood
-              </Button>
-            </Modal.Footer>
-          </>
-        ) : (
+      <Modal show={modalStep !== null} onHide={handleClose} backdrop="static" keyboard={false}>
+        {modalStep === "confirm" && (
           <>
             <Modal.Header closeButton>
               <Modal.Title>Confirm Update</Modal.Title>
             </Modal.Header>
             <Modal.Body>Are you sure about making this changes?</Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={handleClose}>
+              <Button variant="secondary" onClick={handleClose} disabled={submitting}>
                 Cancel
               </Button>
-              <Button variant="primary" onClick={handleConfirm}>
-                Yes
+              <Button variant="primary" onClick={handleConfirm} disabled={submitting}>
+                {submitting ? "Saving..." : "Yes"}
+              </Button>
+            </Modal.Footer>
+          </>
+        )}
+        {modalStep === "success" && (
+          <>
+            <Modal.Header closeButton>
+              <Modal.Title>{initialData ? "Update success" : "Creation success"}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {initialData ? "Product updated successfully." : "Succesfully created product."}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="primary" onClick={handleClose}>
+                Understood
+              </Button>
+            </Modal.Footer>
+          </>
+        )}
+        {modalStep === "error" && (
+          <>
+            <Modal.Header closeButton>
+              <Modal.Title>{initialData ? "Update failed" : "Creation failed"}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>{submitError}</Modal.Body>
+            <Modal.Footer>
+              <Button variant="primary" onClick={handleClose}>
+                Understood
               </Button>
             </Modal.Footer>
           </>

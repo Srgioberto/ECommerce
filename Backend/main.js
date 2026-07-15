@@ -6,7 +6,7 @@ const { db } = require('./src/config');
 function main() {
   // Initialize Sequelize and sync models with the database
   return db.sequelize
-    .sync()
+    .sync({ alter: true })
     .then(() => {
       console.log('Database synchronized.');
       return initializeServer();

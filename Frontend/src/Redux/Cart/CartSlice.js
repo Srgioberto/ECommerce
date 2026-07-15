@@ -21,6 +21,7 @@ export const addItem = createAsyncThunk("cart/addItem", async (info) => {
     const { data } = await axios.post("http://localhost:3000/api/cart/", {
       qty: quantity,
       ProductId: info.cartItem.ProductId,
+      size: info.cartItem.size ?? null,
     });
     return data;
   } catch (error) {
@@ -42,6 +43,7 @@ export const removeItem = createAsyncThunk("cart/removeItem", async (cartItem) =
     const { data } = await axios.delete("http://localhost:3000/api/cart", {
       data: {
         ProductId: cartItem.ProductId,
+        size: cartItem.size ?? null,
       },
     });
     return data;

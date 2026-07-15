@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
+import { getProductImageUrl } from '../../utils/productImage';
 
 const CartItemCheck = ({cartItem, styles}) => {
   let [name, setName] = useState(null);
@@ -17,8 +18,11 @@ const CartItemCheck = ({cartItem, styles}) => {
   return (
     <div className={styles.cartItem}>
       <div className={styles.cartProduct}>
-        <img src={`../img/products/${image}`} alt={name} />
-        <h5>{name}</h5>
+        <img src={getProductImageUrl(image)} alt={name} />
+        <div>
+          <h5>{name}</h5>
+          {cartItem.size && <span className="sku">Size {cartItem.size}</span>}
+        </div>
       </div>
       <div className={styles.cartProductPrice}>${price}</div>
       <div className={styles.count}>{cartItem.qty}</div>

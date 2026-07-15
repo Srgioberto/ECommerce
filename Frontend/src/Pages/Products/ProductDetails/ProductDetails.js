@@ -7,6 +7,7 @@ import Footer from "../../../Components/Footer/Footer";
 import "./ProductDetails.css";
 import { addItem } from "../../../Redux/Cart/CartSlice";
 import { useCartDrawer } from "../../../Components/CartDrawer/CartDrawerContext";
+import { getProductImageUrl, getProductSizes } from "../../../utils/productImage";
 
 const ProductDetails = () => {
   const { categories } = useSelector((state) => state.categories);
@@ -15,9 +16,12 @@ const ProductDetails = () => {
   let [product, setProduct] = useState(null);
   let [quantity, setQuantity] = useState(1);
   let [category, setCategory] = useState(null);
+  let [selectedSize, setSelectedSize] = useState(null);
+  let [sizeError, setSizeError] = useState("");
   const { products } = useSelector((state) => state.products);
   const dispatch = useDispatch();
   const cartDrawer = useCartDrawer();
+  const sizes = getProductSizes(product);
 
   // Increase item quantity, but not above the available stock value
   const increaseQty = (e) => {
@@ -42,16 +46,23 @@ const ProductDetails = () => {
       setProduct(result);
       let category = categories.find((element) => element.id === result.CategoryId).name;
       setCategory(category);
+      setSelectedSize(null);
+      setSizeError("");
     }
   }, [id, products, categories]);
 
   // Create the item object to just save the necessary data
   const handleAddToCart = (e) => {
     e.preventDefault();
+    if (sizes.length > 0 && !selectedSize) {
+      setSizeError("Select a size before adding to your bag.");
+      return;
+    }
     let cartItem = {
       ProductId: parseInt(product.id),
       price: product.price,
       qty: quantity,
+      size: selectedSize,
     };
     let data = {
       cartItem,
@@ -72,7 +83,7 @@ const ProductDetails = () => {
             <Row className="my-4 g-4 align-items-start">
               <Col md={6} sm={12}>
                 <div className="pd-img-container">
-                  <Image className="pd-single-img" src={`../img/products/${product.image}`} />
+                  <Image className="pd-single-img" src={getProductImageUrl(product.image)} />
                 </div>
               </Col>
               <Col md={6} sm={12}>
@@ -103,6 +114,34 @@ const ProductDetails = () => {
                     <>
                       {!user.admin ? (
                         <>
+                          {sizes.length > 0 && (
+                            <div className="mb-4">
+                              <span className="form-label d-block mb-2">Size</span>
+                              <div className="pd-size-grid">
+                                {sizes.map((s) => {
+                                  const available = s.stock > 0;
+                                  return (
+                                    <button
+                                      key={s.size}
+                                      type="button"
+                                      className={`pd-size-chip ${selectedSize === s.size ? "is-selected" : ""} ${
+                                        !available ? "is-unavailable" : ""
+                                      }`}
+                                      onClick={() => {
+                                        if (!available) return;
+                                        setSelectedSize(s.size);
+                                        setSizeError("");
+                                      }}
+                                      disabled={!available}
+                                    >
+                                      {s.size}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                              {sizeError && <small className="text-danger d-block mt-2">{sizeError}</small>}
+                            </div>
+                          )}
                           <span className="form-label d-block mb-2">Quantity</span>
                           <div className="pd-qty mb-4">
                             <button type="button" onClick={decreaseQty} aria-label="Decrease quantity">

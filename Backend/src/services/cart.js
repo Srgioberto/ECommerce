@@ -73,11 +73,13 @@ class CartService {
   }
 
   async addProductToCart(data) {
-    // Verify if the item already exists in the Cart
+    // Verify if the item already exists in the Cart (same product AND same
+    // size - two sizes of the same shoe are separate line items).
     const exists = await CartItem.findOne({
       where: {
         CartId: data.CartId,
         ProductId: data.ProductId,
+        size: data.size ?? null,
       },
     });
     // Get the product price
@@ -89,6 +91,7 @@ class CartService {
         price: productPrice,
         CartId: data.CartId,
         ProductId: data.ProductId,
+        size: data.size ?? null,
       });
       await item.save();
     } else {
@@ -111,6 +114,7 @@ class CartService {
       where: {
         CartId: data.CartId,
         ProductId: data.ProductId,
+        size: data.size ?? null,
       },
     });
     if (!item) {

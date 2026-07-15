@@ -76,7 +76,11 @@ const Cart = () => {
                     </div>
                     <div className="perforation" />
                     {cart.CartItems.map((cartItem) => (
-                      <CartItemCard key={cartItem.ProductId} cartItem={cartItem} reportOutOfStock={handleOutOfStock} />
+                      <CartItemCard
+                        key={`${cartItem.ProductId}-${cartItem.size ?? ""}`}
+                        cartItem={cartItem}
+                        reportOutOfStock={handleOutOfStock}
+                      />
                     ))}
                   </div>
                 </Col>

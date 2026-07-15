@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Table, Button, Modal, Form, InputGroup } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import Pagination from "../Pagination/Pagination";
+import { getProductImageUrl } from "../../utils/productImage";
 
 const ShoeList = ({ shoes, onEdit, onDelete }) => {
   const { categories } = useSelector((state) => state.categories);
@@ -40,9 +41,11 @@ const ShoeList = ({ shoes, onEdit, onDelete }) => {
         <Table striped bordered hover>
           <thead>
             <tr>
+              <th>Photo</th>
               <th>Model</th>
               <th>Price</th>
               <th>Stock</th>
+              <th>Sizes</th>
               <th>Category</th>
               <th>Actions</th>
             </tr>
@@ -50,15 +53,28 @@ const ShoeList = ({ shoes, onEdit, onDelete }) => {
           <tbody>
             {shoes.length > 0 ? (
               shoes
+                .filter(Boolean)
                 .filter((item) => {
                   return search.toLocaleLowerCase() === "" ? item : item.name.toLocaleLowerCase().includes(search);
                 })
                 .slice(firstItemIndex, lastItemIndex)
                 .map((shoe) => (
                   <tr key={shoe.id}>
+                    <td>
+                      <img
+                        src={getProductImageUrl(shoe.image)}
+                        alt={shoe.name}
+                        style={{ width: "44px", height: "44px", objectFit: "contain", background: "var(--paper-dim)", borderRadius: "var(--radius-sm)" }}
+                      />
+                    </td>
                     <td>{shoe.name}</td>
                     <td>{shoe.price}</td>
                     <td>{shoe.stock}</td>
+                    <td>
+                      {Array.isArray(shoe.sizes) && shoe.sizes.length > 0
+                        ? shoe.sizes.map((s) => s.size).join(", ")
+                        : "—"}
+                    </td>
                     <td>{categories.find((c) => c.id === shoe.CategoryId).name}</td>
                     <td className="text-center">
                       <button className="btn-outline btn-sm" onClick={() => onEdit(shoe)}>
@@ -72,7 +88,7 @@ const ShoeList = ({ shoes, onEdit, onDelete }) => {
                 ))
             ) : (
               <tr>
-                <td colSpan="5" className="text-center">
+                <td colSpan="7" className="text-center">
                   No existing shoes
                 </td>
               </tr>
@@ -82,9 +98,11 @@ const ShoeList = ({ shoes, onEdit, onDelete }) => {
       </div>
       <Pagination
         totalItems={
-          shoes.filter((item) => {
-            return search.toLocaleLowerCase() === "" ? item : item.name.toLocaleLowerCase().includes(search);
-          }).length
+          shoes
+            .filter(Boolean)
+            .filter((item) => {
+              return search.toLocaleLowerCase() === "" ? item : item.name.toLocaleLowerCase().includes(search);
+            }).length
         }
         perPage={perPage}
         setCurrentPage={setCurrentPage}

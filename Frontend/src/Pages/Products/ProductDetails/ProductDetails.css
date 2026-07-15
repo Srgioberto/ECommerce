@@ -84,3 +84,45 @@
 .pd-qty input:focus {
   outline: none;
 }
+
+.pd-size-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pd-size-chip {
+  min-width: 46px;
+  height: 42px;
+  padding: 0 0.75rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+
+.pd-size-chip:hover:not(:disabled) {
+  border-color: var(--ink);
+}
+
+.pd-size-chip:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.pd-size-chip.is-selected {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.pd-size-chip.is-unavailable {
+  color: var(--ink-faint);
+  background: var(--paper-dim);
+  border-style: dashed;
+  text-decoration: line-through;
+  cursor: not-allowed;
+}

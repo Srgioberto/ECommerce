@@ -10,35 +10,55 @@ export const productsFetch = createAsyncThunk("products/productsFetch", async ()
   }
 });
 
-export const createProduct = createAsyncThunk("order/admin/createProduct", async (formData) => {
-  try {
-    const { data } = await axios.post("http://localhost:3000/api/admin/products", {
-      name: formData.name,
-      price: parseInt(formData.price),
-      image: formData.image,
-      stock: parseInt(formData.stock),
-      CategoryId: parseInt(formData.CategoryId),
-    });
-    return data;
-  } catch (error) {
-    console.error(error.name + " on create product: " + error.message + " " + error.code);
+// Builds the multipart body shared by create/update: text fields plus an
+// optional image file and an optional list of { size, stock } entries.
+const buildProductFormData = (formData) => {
+  const body = new FormData();
+  body.append("name", formData.name);
+  body.append("price", formData.price);
+  body.append("CategoryId", formData.CategoryId);
+  if (formData.sizes && formData.sizes.length > 0) {
+    body.append("sizes", JSON.stringify(formData.sizes));
+  } else {
+    body.append("stock", formData.stock);
   }
-});
+  if (formData.imageFile) {
+    body.append("image", formData.imageFile);
+  }
+  return body;
+};
 
-export const updateProduct = createAsyncThunk("order/admin/updateProduct", async (formData) => {
-  try {
-    const { data } = await axios.put("http://localhost:3000/api/admin/products/" + formData.id, {
-      name: formData.name,
-      price: parseInt(formData.price),
-      image: formData.image,
-      stock: parseInt(formData.stock),
-      CategoryId: parseInt(formData.CategoryId),
-    });
-    return data;
-  } catch (error) {
-    console.error(error.name + " on update product: " + error.message + " " + error.code);
+export const createProduct = createAsyncThunk(
+  "order/admin/createProduct",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post(
+        "http://localhost:3000/api/admin/products",
+        buildProductFormData(formData)
+      );
+      return data;
+    } catch (error) {
+      console.error(error.name + " on create product: " + error.message + " " + error.code);
+      return rejectWithValue(error.response?.data?.error || error.message);
+    }
   }
-});
+);
+
+export const updateProduct = createAsyncThunk(
+  "order/admin/updateProduct",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.put(
+        "http://localhost:3000/api/admin/products/" + formData.id,
+        buildProductFormData(formData)
+      );
+      return data;
+    } catch (error) {
+      console.error(error.name + " on update product: " + error.message + " " + error.code);
+      return rejectWithValue(error.response?.data?.error || error.message);
+    }
+  }
+);
 
 export const deleteProduct = createAsyncThunk("order/admin/deleteProduct", async (id) => {
   try {
@@ -85,7 +105,7 @@ const ProductSlice = createSlice({
     });
     builder.addCase(createProduct.rejected, (state, action) => {
       state.isLoading = false;
-      state.error = action.error.message;
+      state.error = action.payload || action.error.message;
     });
     //Update product
     builder.addCase(updateProduct.pending, (state, action) => {
@@ -100,7 +120,7 @@ const ProductSlice = createSlice({
     });
     builder.addCase(updateProduct.rejected, (state, action) => {
       state.isLoading = false;
-      state.error = action.error.message;
+      state.error = action.payload || action.error.message;
     });
     //Delete product
     builder.addCase(deleteProduct.pending, (state, action) => {
