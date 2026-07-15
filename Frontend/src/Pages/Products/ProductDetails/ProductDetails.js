@@ -2,12 +2,12 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import TopNavbar from "../../../Components/Header/TopNavbar";
-import { Col, Container, Image, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import Footer from "../../../Components/Footer/Footer";
 import "./ProductDetails.css";
 import { addItem } from "../../../Redux/Cart/CartSlice";
 import { useCartDrawer } from "../../../Components/CartDrawer/CartDrawerContext";
-import { getProductImageUrl, getProductSizes } from "../../../utils/productImage";
+import { getProductGallery, getProductSizes } from "../../../utils/productImage";
 import { productsFetch } from "../../../Redux/Product/ProductSlice";
 
 const ProductDetails = () => {
@@ -19,10 +19,22 @@ const ProductDetails = () => {
   let [category, setCategory] = useState(null);
   let [selectedSize, setSelectedSize] = useState(null);
   let [sizeError, setSizeError] = useState("");
+  let [activeImageIndex, setActiveImageIndex] = useState(0);
+  let [zoomStyle, setZoomStyle] = useState({});
   const { products } = useSelector((state) => state.products);
   const dispatch = useDispatch();
   const cartDrawer = useCartDrawer();
   const sizes = getProductSizes(product);
+  const gallery = getProductGallery(product);
+
+  const handleZoomMove = (e) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    setZoomStyle({ transformOrigin: `${x}% ${y}%`, transform: "scale(1.9)" });
+  };
+
+  const handleZoomLeave = () => setZoomStyle({});
 
   // Stock can change between visits (someone else buying the last pair),
   // so always pull a fresh copy instead of trusting whatever was cached
@@ -56,6 +68,7 @@ const ProductDetails = () => {
       setCategory(category);
       setSelectedSize(null);
       setSizeError("");
+      setActiveImageIndex(0);
     }
   }, [id, products, categories]);
 
@@ -90,9 +103,33 @@ const ProductDetails = () => {
           {product ? (
             <Row className="my-4 g-4 align-items-start">
               <Col md={6} sm={12}>
-                <div className="pd-img-container">
-                  <Image className="pd-single-img" src={getProductImageUrl(product.image)} />
+                <div
+                  className="pd-img-container"
+                  onMouseMove={handleZoomMove}
+                  onMouseLeave={handleZoomLeave}
+                >
+                  <img
+                    className="pd-single-img"
+                    src={gallery[activeImageIndex] || gallery[0]}
+                    alt={product.name}
+                    style={zoomStyle}
+                  />
                 </div>
+                {gallery.length > 1 && (
+                  <div className="pd-thumbs">
+                    {gallery.map((src, index) => (
+                      <button
+                        key={src}
+                        type="button"
+                        className={`pd-thumb ${index === activeImageIndex ? "is-active" : ""}`}
+                        onClick={() => setActiveImageIndex(index)}
+                        aria-label={`View photo ${index + 1}`}
+                      >
+                        <img src={src} alt={`${product.name} view ${index + 1}`} />
+                      </button>
+                    ))}
+                  </div>
+                )}
               </Col>
               <Col md={6} sm={12}>
                 <div className="pd-info">

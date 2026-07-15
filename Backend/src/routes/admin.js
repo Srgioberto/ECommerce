@@ -12,8 +12,8 @@ const router = Router();
 
 router.use('/admin', isAdmin);
 
-router.post('/admin/products', upload.single('image'), createProduct);
-router.put('/admin/products/:id', upload.single('image'), updateProduct);
+router.post('/admin/products', upload.array('images', 6), createProduct);
+router.put('/admin/products/:id', upload.array('images', 6), updateProduct);
 router.delete('/admin/products/:id', deleteProduct);
 
 router.get('/admin/orders', getOrders);

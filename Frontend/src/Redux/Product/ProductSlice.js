@@ -10,8 +10,9 @@ export const productsFetch = createAsyncThunk("products/productsFetch", async ()
   }
 });
 
-// Builds the multipart body shared by create/update: text fields plus an
-// optional image file and an optional list of { size, stock } entries.
+// Builds the multipart body shared by create/update: text fields, an
+// optional list of { size, stock } entries, which existing gallery photos to
+// keep (edit only), and any newly added photo files.
 const buildProductFormData = (formData) => {
   const body = new FormData();
   body.append("name", formData.name);
@@ -22,9 +23,8 @@ const buildProductFormData = (formData) => {
   } else {
     body.append("stock", formData.stock);
   }
-  if (formData.imageFile) {
-    body.append("image", formData.imageFile);
-  }
+  body.append("existingImages", JSON.stringify(formData.existingImages || []));
+  (formData.imageFiles || []).forEach((file) => body.append("images", file));
   return body;
 };
 

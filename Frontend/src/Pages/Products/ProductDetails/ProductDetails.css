@@ -8,6 +8,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  cursor: zoom-in;
   animation: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -16,6 +18,41 @@
   width: 100%;
   max-height: 420px;
   object-fit: contain;
+  transition: transform 0.15s ease;
+  will-change: transform;
+}
+
+.pd-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.85rem;
+}
+
+.pd-thumb {
+  width: 64px;
+  height: 64px;
+  padding: 0.4rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--paper-dim);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.pd-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.pd-thumb:hover {
+  border-color: var(--ink);
+}
+
+.pd-thumb.is-active {
+  border-color: var(--stamp);
+  border-width: 2px;
 }
 
 .pd-info {

@@ -15,8 +15,11 @@ const ShoeForm = ({ onSubmit, initialData }) => {
   const [useSizes, setUseSizes] = useState(false);
   const [sizes, setSizes] = useState([]);
   const [sizeDraft, setSizeDraft] = useState({ size: "", stock: "" });
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  // Photos already saved on the product (edit only) that the admin keeps.
+  const [existingImages, setExistingImages] = useState([]);
+  // Newly picked files not uploaded yet, plus their local previews.
+  const [newImageFiles, setNewImageFiles] = useState([]);
+  const [newImagePreviews, setNewImagePreviews] = useState([]);
   const [errors, setErrors] = useState({});
 
   // Modal walks through: 'confirm' (edit only) -> submitting -> 'success' | 'error'
@@ -35,17 +38,45 @@ const ShoeForm = ({ onSubmit, initialData }) => {
       const initialSizes = Array.isArray(initialData.sizes) ? initialData.sizes : [];
       setSizes(initialSizes);
       setUseSizes(initialSizes.length > 0);
-      setImagePreview(getProductImageUrl(initialData.image));
-      setImageFile(null);
+      const gallery =
+        Array.isArray(initialData.images) && initialData.images.length > 0
+          ? initialData.images
+          : [initialData.image];
+      setExistingImages(gallery.filter(Boolean));
     } else {
       setFormData({ name: "", price: "", stock: "", CategoryId: "" });
       setSizes([]);
       setUseSizes(false);
-      setImagePreview(null);
-      setImageFile(null);
+      setExistingImages([]);
     }
     setSizeDraft({ size: "", stock: "" });
+    setNewImageFiles([]);
+    setNewImagePreviews([]);
   }, [initialData]);
+
+  const handleChage = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    setErrors({ ...errors, [name]: "" });
+  };
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    setNewImageFiles([...newImageFiles, ...files]);
+    setNewImagePreviews([...newImagePreviews, ...files.map((file) => URL.createObjectURL(file))]);
+    setErrors({ ...errors, image: "" });
+    e.target.value = "";
+  };
+
+  const handleRemoveExistingImage = (imagePath) => {
+    setExistingImages(existingImages.filter((img) => img !== imagePath));
+  };
+
+  const handleRemoveNewImage = (index) => {
+    setNewImageFiles(newImageFiles.filter((_, i) => i !== index));
+    setNewImagePreviews(newImagePreviews.filter((_, i) => i !== index));
+  };
 
   // Switching mode should never silently mix a leftover value from the
   // other mode into what gets submitted.
@@ -58,6 +89,7 @@ const ShoeForm = ({ onSubmit, initialData }) => {
   };
 
   const sizesTotal = sizes.reduce((sum, s) => sum + (parseInt(s.stock, 10) || 0), 0);
+  const totalPhotos = existingImages.length + newImageFiles.length;
 
   const handleSizeDraftKeyDown = (e) => {
     // These inputs live inside the product <form> - Enter would otherwise
@@ -66,20 +98,6 @@ const ShoeForm = ({ onSubmit, initialData }) => {
       e.preventDefault();
       handleAddSize();
     }
-  };
-
-  const handleChage = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-    setErrors({ ...errors, [name]: "" });
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
-    setErrors({ ...errors, image: "" });
   };
 
   const handleAddSize = () => {
@@ -105,7 +123,7 @@ const ShoeForm = ({ onSubmit, initialData }) => {
     if (useSizes && sizes.length === 0) newErrors.stock = "Agrega al menos una talla con su stock.";
     if (!useSizes && !formData.stock) newErrors.stock = "La Cantidad en Stock es Obligatoria.";
     if (!formData.CategoryId || formData.CategoryId === "none") newErrors.category = "La Categoría es Obligatoria";
-    if (!initialData && !imageFile) newErrors.image = "La Imagen es Obligatoria.";
+    if (totalPhotos === 0) newErrors.image = "Agrega al menos una foto del producto.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -117,7 +135,7 @@ const ShoeForm = ({ onSubmit, initialData }) => {
   const submit = (id) => {
     setSubmitting(true);
     setSubmitError("");
-    onSubmit({ ...formData, sizes, imageFile, id })
+    onSubmit({ ...formData, sizes, existingImages, imageFiles: newImageFiles, id })
       .unwrap()
       .then(() => {
         setSubmitting(false);
@@ -291,8 +309,11 @@ const ShoeForm = ({ onSubmit, initialData }) => {
 
         <div className="mt-3">
           <label className="form-label" htmlFor="image">
-            Product Photo
+            Product Photos
           </label>
+          <p className="sku mb-2">
+            Backgrounds are automatically cleaned up to plain white. Add as many angles as you like.
+          </p>
           <input
             type="file"
             id="image"
@@ -300,11 +321,48 @@ const ShoeForm = ({ onSubmit, initialData }) => {
             onChange={handleImageChange}
             className="form-control"
             accept="image/*"
+            multiple
           />
           {errors.image && <small className="text-danger">{errors.image}</small>}
-          {imagePreview && (
-            <div className="mt-2 p-2" style={{ background: "var(--paper-dim)", borderRadius: "var(--radius-sm)", width: "fit-content" }}>
-              <img src={imagePreview} alt="Preview" style={{ height: "100px", width: "100px", objectFit: "contain" }} />
+
+          {totalPhotos > 0 && (
+            <div className="d-flex flex-wrap gap-2 mt-2">
+              {existingImages.map((img) => (
+                <div key={img} style={{ position: "relative" }}>
+                  <img
+                    src={getProductImageUrl(img)}
+                    alt="Product"
+                    style={{ height: "80px", width: "80px", objectFit: "contain", background: "var(--paper-dim)", borderRadius: "var(--radius-sm)" }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveExistingImage(img)}
+                    aria-label="Remove photo"
+                    className="btn-stamp btn-sm"
+                    style={{ position: "absolute", top: "-8px", right: "-8px", padding: "0.15rem 0.45rem" }}
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))}
+              {newImagePreviews.map((preview, index) => (
+                <div key={preview} style={{ position: "relative" }}>
+                  <img
+                    src={preview}
+                    alt="New upload preview"
+                    style={{ height: "80px", width: "80px", objectFit: "contain", background: "var(--paper-dim)", borderRadius: "var(--radius-sm)" }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveNewImage(index)}
+                    aria-label="Remove photo"
+                    className="btn-stamp btn-sm"
+                    style={{ position: "absolute", top: "-8px", right: "-8px", padding: "0.15rem 0.45rem" }}
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))}
             </div>
           )}
         </div>

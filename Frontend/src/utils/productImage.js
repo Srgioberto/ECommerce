@@ -13,3 +13,12 @@ export const getProductImageUrl = (image) => {
 // it blank) - always work with an array so callers don't have to guard.
 export const getProductSizes = (product) =>
   Array.isArray(product?.sizes) ? product.sizes : [];
+
+// Full photo gallery as resolved URLs. Falls back to the single cover image
+// for legacy/seed products that predate the gallery feature.
+export const getProductGallery = (product) => {
+  const images = Array.isArray(product?.images) && product.images.length > 0
+    ? product.images
+    : [product?.image];
+  return images.filter(Boolean).map(getProductImageUrl);
+};

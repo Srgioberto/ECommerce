@@ -7,10 +7,19 @@ module.exports = (sequelize) =>
       allowNull: false,
     },
     image: {
-      // Uploaded photos are stored as "/uploads/products/<timestamp>-<slug>.webp",
-      // which comfortably exceeds the old 45-char limit meant for bare filenames.
+      // Cover photo - always images[0] when a gallery exists. Uploaded photos
+      // are stored as "/uploads/products/<timestamp>-<slug>.webp", which
+      // comfortably exceeds the old 45-char limit meant for bare filenames.
       type: DataTypes.STRING(255),
       allowNull: false,
+    },
+    // Full photo gallery, e.g. ["/uploads/products/...-1.webp", "...-2.webp"].
+    // Legacy/seed products predating the gallery feature have this empty and
+    // only `image` set.
+    images: {
+      type: DataTypes.JSON,
+      allowNull: false,
+      defaultValue: [],
     },
     price: {
       type: DataTypes.FLOAT,
