@@ -8,6 +8,7 @@ import "./ProductDetails.css";
 import { addItem } from "../../../Redux/Cart/CartSlice";
 import { useCartDrawer } from "../../../Components/CartDrawer/CartDrawerContext";
 import { getProductImageUrl, getProductSizes } from "../../../utils/productImage";
+import { productsFetch } from "../../../Redux/Product/ProductSlice";
 
 const ProductDetails = () => {
   const { categories } = useSelector((state) => state.categories);
@@ -22,6 +23,13 @@ const ProductDetails = () => {
   const dispatch = useDispatch();
   const cartDrawer = useCartDrawer();
   const sizes = getProductSizes(product);
+
+  // Stock can change between visits (someone else buying the last pair),
+  // so always pull a fresh copy instead of trusting whatever was cached
+  // in the store from login/last navigation.
+  useEffect(() => {
+    dispatch(productsFetch());
+  }, [dispatch]);
 
   // Increase item quantity, but not above the available stock value
   const increaseQty = (e) => {
@@ -98,10 +106,12 @@ const ProductDetails = () => {
                     <span className="sku">SKU-{String(product.id).padStart(4, "0")}</span>
                     {product.stock < 1 ? (
                       <span className="tag-badge tag-badge--stamp">Sold out</span>
-                    ) : (
+                    ) : user.admin ? (
                       <span className={`tag-badge ${lowStock ? "tag-badge--stamp" : "tag-badge--court"}`}>
                         {lowStock ? `Only ${product.stock} left` : `${product.stock} in stock`}
                       </span>
+                    ) : (
+                      <span className="tag-badge tag-badge--court">In stock</span>
                     )}
                   </div>
                   <p className="pd-price">${product.price}</p>

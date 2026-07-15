@@ -12,6 +12,7 @@ const ShoeForm = ({ onSubmit, initialData }) => {
     stock: "",
     CategoryId: "",
   });
+  const [useSizes, setUseSizes] = useState(false);
   const [sizes, setSizes] = useState([]);
   const [sizeDraft, setSizeDraft] = useState({ size: "", stock: "" });
   const [imageFile, setImageFile] = useState(null);
@@ -31,17 +32,41 @@ const ShoeForm = ({ onSubmit, initialData }) => {
         stock: initialData.stock,
         CategoryId: initialData.CategoryId,
       });
-      setSizes(Array.isArray(initialData.sizes) ? initialData.sizes : []);
+      const initialSizes = Array.isArray(initialData.sizes) ? initialData.sizes : [];
+      setSizes(initialSizes);
+      setUseSizes(initialSizes.length > 0);
       setImagePreview(getProductImageUrl(initialData.image));
       setImageFile(null);
     } else {
       setFormData({ name: "", price: "", stock: "", CategoryId: "" });
       setSizes([]);
+      setUseSizes(false);
       setImagePreview(null);
       setImageFile(null);
     }
     setSizeDraft({ size: "", stock: "" });
   }, [initialData]);
+
+  // Switching mode should never silently mix a leftover value from the
+  // other mode into what gets submitted.
+  const handleModeChange = (nextUseSizes) => {
+    setUseSizes(nextUseSizes);
+    if (!nextUseSizes) {
+      setSizes([]);
+    }
+    setErrors({ ...errors, stock: "" });
+  };
+
+  const sizesTotal = sizes.reduce((sum, s) => sum + (parseInt(s.stock, 10) || 0), 0);
+
+  const handleSizeDraftKeyDown = (e) => {
+    // These inputs live inside the product <form> - Enter would otherwise
+    // submit the whole product instead of just adding the size row.
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddSize();
+    }
+  };
 
   const handleChage = (e) => {
     const { name, value } = e.target;
@@ -77,7 +102,8 @@ const ShoeForm = ({ onSubmit, initialData }) => {
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = "El nombre del Modelo es Obligatorio.";
     if (!formData.price) newErrors.price = "El Precio es Obligatorio.";
-    if (sizes.length === 0 && !formData.stock) newErrors.stock = "La Cantidad en Stock es Obligatoria.";
+    if (useSizes && sizes.length === 0) newErrors.stock = "Agrega al menos una talla con su stock.";
+    if (!useSizes && !formData.stock) newErrors.stock = "La Cantidad en Stock es Obligatoria.";
     if (!formData.CategoryId || formData.CategoryId === "none") newErrors.category = "La Categoría es Obligatoria";
     if (!initialData && !imageFile) newErrors.image = "La Imagen es Obligatoria.";
 
@@ -158,24 +184,86 @@ const ShoeForm = ({ onSubmit, initialData }) => {
           {errors.price && <small className="text-danger">{errors.price}</small>}
         </div>
 
-        <div className="mt-2">
-          <label className="form-label" htmlFor="stock">
-            Stock {sizes.length > 0 && <span className="text-muted">(auto: sum of sizes)</span>}
-          </label>
-          <input
-            type="number"
-            id="stock"
-            name="stock"
-            value={sizes.length > 0 ? sizes.reduce((sum, s) => sum + (parseInt(s.stock, 10) || 0), 0) : formData.stock}
-            onChange={handleChage}
-            className="form-control"
-            placeholder="Available Stock"
-            disabled={sizes.length > 0}
-          />
-          {errors.stock && <small className="text-danger">{errors.stock}</small>}
+        <div className="mt-3">
+          <label className="form-label d-block mb-2">Stock</label>
+          <div className="d-flex gap-2 mb-3">
+            <button
+              type="button"
+              className={useSizes ? "btn-outline btn-sm" : "btn-ink btn-sm"}
+              onClick={() => handleModeChange(false)}
+            >
+              Single number
+            </button>
+            <button
+              type="button"
+              className={useSizes ? "btn-ink btn-sm" : "btn-outline btn-sm"}
+              onClick={() => handleModeChange(true)}
+            >
+              By size
+            </button>
+          </div>
+
+          {!useSizes ? (
+            <div>
+              <input
+                type="number"
+                id="stock"
+                name="stock"
+                value={formData.stock}
+                onChange={handleChage}
+                className="form-control"
+                placeholder="Available stock"
+              />
+              {errors.stock && <small className="text-danger">{errors.stock}</small>}
+            </div>
+          ) : (
+            <div>
+              {sizes.length > 0 && (
+                <div className="d-flex flex-wrap gap-2 mb-2">
+                  {sizes.map((s) => (
+                    <span key={s.size} className="tag-badge">
+                      {s.size} &middot; {s.stock}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveSize(s.size)}
+                        aria-label={`Remove size ${s.size}`}
+                        style={{ border: "none", background: "none", marginLeft: "0.35rem", cursor: "pointer" }}
+                      >
+                        &times;
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div className="d-flex gap-2">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Size (e.g. 42)"
+                  value={sizeDraft.size}
+                  onChange={(e) => setSizeDraft({ ...sizeDraft, size: e.target.value })}
+                  onKeyDown={handleSizeDraftKeyDown}
+                />
+                <input
+                  type="number"
+                  min="0"
+                  className="form-control"
+                  placeholder="Stock for this size"
+                  value={sizeDraft.stock}
+                  onChange={(e) => setSizeDraft({ ...sizeDraft, stock: e.target.value })}
+                  onKeyDown={handleSizeDraftKeyDown}
+                />
+                <button type="button" className="btn-outline btn-sm" onClick={handleAddSize} style={{ flexShrink: 0 }}>
+                  Add
+                </button>
+              </div>
+              {errors.stock && <small className="text-danger d-block mt-2">{errors.stock}</small>}
+              <p className="sku mt-2 mb-0">Total stock: {sizesTotal} (sum of all sizes)</p>
+            </div>
+          )}
         </div>
 
-        <div className="mt-2">
+        <div className="mt-3">
           <label className="form-label" htmlFor="CategoryId">
             Category
           </label>
@@ -199,47 +287,6 @@ const ShoeForm = ({ onSubmit, initialData }) => {
             )}
           </select>
           {errors.category && <small className="text-danger">{errors.category}</small>}
-        </div>
-
-        <div className="mt-3">
-          <label className="form-label">Sizes</label>
-          {sizes.length > 0 && (
-            <div className="d-flex flex-wrap gap-2 mb-2">
-              {sizes.map((s) => (
-                <span key={s.size} className="tag-badge">
-                  {s.size}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveSize(s.size)}
-                    aria-label={`Remove size ${s.size}`}
-                    style={{ border: "none", background: "none", marginLeft: "0.35rem", cursor: "pointer" }}
-                  >
-                    &times;
-                  </button>
-                </span>
-              ))}
-            </div>
-          )}
-          <div className="d-flex gap-2">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Size (e.g. 42)"
-              value={sizeDraft.size}
-              onChange={(e) => setSizeDraft({ ...sizeDraft, size: e.target.value })}
-            />
-            <input
-              type="number"
-              min="0"
-              className="form-control"
-              placeholder="Stock for this size"
-              value={sizeDraft.stock}
-              onChange={(e) => setSizeDraft({ ...sizeDraft, stock: e.target.value })}
-            />
-            <button type="button" className="btn-outline btn-sm" onClick={handleAddSize} style={{ flexShrink: 0 }}>
-              Add
-            </button>
-          </div>
         </div>
 
         <div className="mt-3">

@@ -9,6 +9,7 @@ const CartItemCard = ({ cartItem, reportOutOfStock }) => {
   let [stock, setStock] = useState(null);
   let [image, setImage] = useState(null);
   const { products } = useSelector((state) => state.products);
+  const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -60,7 +61,7 @@ const CartItemCard = ({ cartItem, reportOutOfStock }) => {
           <h3>{name}</h3>
           {cartItem.size && <span className="sku d-block mb-1">Size {cartItem.size}</span>}
           <span className={`tag-badge ${stock < 1 ? "tag-badge--stamp" : "tag-badge--court"}`}>
-            {stock < 1 ? "Out of stock" : `${stock} in stock`}
+            {stock < 1 ? "Out of stock" : user?.admin ? `${stock} in stock` : "In stock"}
           </span>
           <button className="cart-row-remove" onClick={handleRemove}>Remove</button>
         </div>

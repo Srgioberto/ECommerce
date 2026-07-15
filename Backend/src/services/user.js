@@ -10,9 +10,15 @@ class UserService {
       throw new Error('email is already in use');
     }
     const hashedPassword = await bcrypt.hash(userData.password, 10);
+    // Signing up as admin requires knowing the invite code (set via
+    // ADMIN_SIGNUP_CODE), so anyone can self-register but only those with
+    // the code get admin access - there's no separate admin-invite flow yet.
+    const { adminCode, ...rest } = userData;
+    const isAdmin =
+      !!process.env.ADMIN_SIGNUP_CODE && adminCode === process.env.ADMIN_SIGNUP_CODE;
     const user = User.build({
-      ...userData,
-      admin: 0,
+      ...rest,
+      admin: isAdmin ? 1 : 0,
       password: hashedPassword,
     });
     await user.save();

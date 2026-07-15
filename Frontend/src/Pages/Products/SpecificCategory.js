@@ -4,9 +4,10 @@ import Footer from "../../Components/Footer/Footer";
 import { Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import ProductCard from "../../Components/Product/Card/ProductCard";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Pagination from "../../Components/Pagination/Pagination";
 import Reveal from "../../Components/Reveal/Reveal";
+import { productsFetch } from "../../Redux/Product/ProductSlice";
 
 const SpecificCategory = () => {
   const [search, setSearch] = useState("");
@@ -14,6 +15,13 @@ const SpecificCategory = () => {
   const { products } = useSelector((state) => state.products);
   let { SpecificCategory } = useParams();
   const [categoryProducts, setCategoryProducts] = useState([]);
+  const dispatch = useDispatch();
+
+  // Refresh stock levels every time this list is viewed, rather than
+  // trusting whatever was cached from login/last navigation.
+  useEffect(() => {
+    dispatch(productsFetch());
+  }, [dispatch]);
 
   useEffect(() => {
     let categoryId = categories.find((element) => element.name === SpecificCategory).id;

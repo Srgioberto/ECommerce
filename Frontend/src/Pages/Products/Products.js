@@ -1,15 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TopNavbar from "../../Components/Header/TopNavbar";
 import Footer from "../../Components/Footer/Footer";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 import ProductCard from "../../Components/Product/Card/ProductCard";
 import Pagination from "../../Components/Pagination/Pagination";
 import Reveal from "../../Components/Reveal/Reveal";
+import { productsFetch } from "../../Redux/Product/ProductSlice";
 
 const Products = () => {
   const [search, setSearch] = useState("");
   const { products } = useSelector((state) => state.products);
+  const dispatch = useDispatch();
+
+  // Refresh stock levels every time this list is viewed, rather than
+  // trusting whatever was cached from login/last navigation.
+  useEffect(() => {
+    dispatch(productsFetch());
+  }, [dispatch]);
 
   //Pagination
   const [currentPage, setCurrentPage] = useState(1);

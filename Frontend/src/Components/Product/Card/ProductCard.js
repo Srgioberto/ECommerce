@@ -8,6 +8,7 @@ import { getProductImageUrl, getProductSizes } from "../../../utils/productImage
 
 const ProductCard = ({ product }) => {
   const { categories } = useSelector((state) => state.categories);
+  const { user } = useSelector((state) => state.user);
   const category = categories.find((element) => element.id === product.CategoryId);
   const inStock = product.stock > 0;
   const lowStock = inStock && product.stock <= 5;
@@ -57,7 +58,11 @@ const ProductCard = ({ product }) => {
           <div className={styles.metaRow}>
             <span className="sku">SKU-{String(product.id).padStart(4, "0")}</span>
             <span className={`tag-badge ${lowStock ? "tag-badge--stamp" : "tag-badge--court"}`}>
-              {inStock ? (lowStock ? `${product.stock} left` : "In stock") : "Sold out"}
+              {!inStock
+                ? "Sold out"
+                : user?.admin && lowStock
+                ? `${product.stock} left`
+                : "In stock"}
             </span>
           </div>
           <p className={styles.price}>${product.price}</p>
