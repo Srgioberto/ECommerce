@@ -7,6 +7,7 @@ const {
   deleteProduct,
 } = require('../controllers/products');
 const { getOrders } = require('../controllers/orders');
+const { listUsers, setUserAdmin } = require('../controllers/users');
 
 const router = Router();
 
@@ -17,5 +18,8 @@ router.put('/admin/products/:id', upload.array('images', 6), updateProduct);
 router.delete('/admin/products/:id', deleteProduct);
 
 router.get('/admin/orders', getOrders);
+
+router.get('/admin/users', listUsers);
+router.patch('/admin/users/:id/admin', setUserAdmin);
 
 module.exports = { adminRouter: router };

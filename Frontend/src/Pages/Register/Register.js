@@ -22,7 +22,6 @@ const Register = () => {
     email: "",
     password: "",
     password2: "",
-    adminCode: "",
   });
   //error array para almacenar los errores de cada input si es que hay
   const [errors, setErrors] = useState({});
@@ -93,7 +92,7 @@ const Register = () => {
       dispatch(registerUser(formData))
         .unwrap()
         .then(() => {
-          setFormData({ firstName: "", lastName: "", phone: "", email: "", password: "", password2: "", adminCode: "" });
+          setFormData({ firstName: "", lastName: "", phone: "", email: "", password: "", password2: "" });
           // Crea un array con todas las promesas de dispatch, para obtener y guardar los datos en el store
           const promises = [
             store.dispatch(cartFetch()),
@@ -240,20 +239,6 @@ const Register = () => {
                       </Form.Group>
                     </Col>
                   </Row>
-
-                  <Form.Group className="mb-3" id="formAdminCode">
-                    <Form.Label>Admin code (optional)</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="adminCode"
-                      value={formData.adminCode}
-                      onChange={handleChange}
-                      placeholder="Only if you were given one"
-                    />
-                    <Form.Text className="text-muted">
-                      Leave this blank for a regular account.
-                    </Form.Text>
-                  </Form.Group>
 
                   <button type="submit" className="btn-stamp mt-3" disabled={isLoading}>
                     {isLoading ? (

@@ -4,6 +4,7 @@ import NotFound from "./Pages/NotFound";
 import Products from "./Pages/Products/Products";
 import SpecificCategory from "./Pages/Products/SpecificCategory";
 import ShoeManager from "./Pages/Shoes/ShoeManager";
+import AdminUsers from "./Pages/Admin/AdminUsers";
 import OrderList from "./Pages/Orders/OrderList";
 import OrderDetail from "./Pages/Orders/OrderDetail";
 import Cart from "./Pages/Cart/Cart";
@@ -34,6 +35,7 @@ function App() {
           <Route element={<ProtectedRoutesAdmin />}>
             <Route path="/shoes" element={<ShoeManager />} />
             <Route path="/orders" element={<OrderList />} />
+            <Route path="/admin/users" element={<AdminUsers />} />
           </Route>
           <Route path="/order/:id" element={<OrderDetail />} />
           <Route path="/Product/:id" element={<ProductDetails />} />

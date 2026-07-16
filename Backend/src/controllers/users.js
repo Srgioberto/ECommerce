@@ -37,4 +37,22 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+const listUsers = async (req, res) => {
+  try {
+    const users = await userService.findAll();
+    res.status(200).send(users);
+  } catch (err) {
+    res.status(500).send({ error: 'Something went wrong: ' + err.message });
+  }
+};
+
+const setUserAdmin = async (req, res) => {
+  try {
+    const user = await userService.setUserAdmin(req.params.id, !!req.body.admin, req.currentUserId);
+    res.status(200).send(user);
+  } catch (err) {
+    res.status(400).send({ error: err.message });
+  }
+};
+
+module.exports = { registerUser, loginUser, listUsers, setUserAdmin };

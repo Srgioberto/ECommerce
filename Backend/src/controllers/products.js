@@ -73,7 +73,7 @@ const buildProductData = async (body, files) => {
   let newImages = [];
   if (files && files.length > 0) {
     newImages = await Promise.all(
-      files.map((file) => saveProductImage(file.buffer, file.originalname, file.mimetype))
+      files.map((file) => saveProductImage(file.buffer, file.originalname))
     );
   }
 

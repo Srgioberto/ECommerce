@@ -10,15 +10,11 @@ class UserService {
       throw new Error('email is already in use');
     }
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-    // Signing up as admin requires knowing the invite code (set via
-    // ADMIN_SIGNUP_CODE), so anyone can self-register but only those with
-    // the code get admin access - there's no separate admin-invite flow yet.
-    const { adminCode, ...rest } = userData;
-    const isAdmin =
-      !!process.env.ADMIN_SIGNUP_CODE && adminCode === process.env.ADMIN_SIGNUP_CODE;
+    // Public registration never grants admin access - existing admins
+    // promote other accounts from the admin panel (see setUserAdmin below).
     const user = User.build({
-      ...rest,
-      admin: isAdmin ? 1 : 0,
+      ...userData,
+      admin: 0,
       password: hashedPassword,
     });
     await user.save();
@@ -62,6 +58,41 @@ class UserService {
     }
     delete user.password;
     return user;
+  }
+
+  async findAll() {
+    const users = await User.findAll({
+      attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'admin'],
+      order: [['id', 'ASC']],
+    });
+    return users.map((user) => ({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone,
+      admin: !!user.admin,
+    }));
+  }
+
+  async setUserAdmin(id, admin, requestingUserId) {
+    if (parseInt(id, 10) === requestingUserId && !admin) {
+      throw new Error('You cannot remove your own admin access');
+    }
+    const user = await User.findByPk(id);
+    if (!user) {
+      throw new Error('user not found');
+    }
+    user.admin = admin ? 1 : 0;
+    await user.save();
+    return {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone,
+      admin: !!user.admin,
+    };
   }
 }
 

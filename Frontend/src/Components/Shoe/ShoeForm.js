@@ -312,7 +312,7 @@ const ShoeForm = ({ onSubmit, initialData }) => {
             Product Photos
           </label>
           <p className="sku mb-2">
-            Backgrounds are automatically cleaned up to plain white. Add as many angles as you like.
+            Use photos that are already edited and ready to publish (consistent background, well lit). Add as many angles as you like.
           </p>
           <input
             type="file"
@@ -332,7 +332,7 @@ const ShoeForm = ({ onSubmit, initialData }) => {
                   <img
                     src={getProductImageUrl(img)}
                     alt="Product"
-                    style={{ height: "80px", width: "80px", objectFit: "contain", background: "var(--paper-dim)", borderRadius: "var(--radius-sm)" }}
+                    style={{ height: "80px", width: "80px", objectFit: "contain", background: "var(--surface)", border: "1px solid var(--line)", borderRadius: "var(--radius-sm)" }}
                   />
                   <button
                     type="button"
@@ -350,7 +350,7 @@ const ShoeForm = ({ onSubmit, initialData }) => {
                   <img
                     src={preview}
                     alt="New upload preview"
-                    style={{ height: "80px", width: "80px", objectFit: "contain", background: "var(--paper-dim)", borderRadius: "var(--radius-sm)" }}
+                    style={{ height: "80px", width: "80px", objectFit: "contain", background: "var(--surface)", border: "1px solid var(--line)", borderRadius: "var(--radius-sm)" }}
                   />
                   <button
                     type="button"

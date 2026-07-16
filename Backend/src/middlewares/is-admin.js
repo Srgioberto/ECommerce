@@ -11,6 +11,7 @@ const isAdmin = async (req, res, next) => {
     if (user.admin !== 1) {
       throw new Error('only admins can access this route');
     }
+    req.currentUserId = user.id;
     next();
   } catch (err) {
     return res

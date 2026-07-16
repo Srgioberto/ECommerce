@@ -7,6 +7,7 @@ import sessionStorage from "redux-persist/es/storage/session";
 import { persistReducer } from "redux-persist";
 import { combineReducers } from "@reduxjs/toolkit";
 import UserSlice from "./User/UserSlice";
+import AdminUserSlice from "./AdminUsers/AdminUserSlice";
 
 const persistConfig = {
   key: "root",
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   cart: CartSlice,
   orders: OrderSlice,
   user: UserSlice,
+  adminUsers: AdminUserSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

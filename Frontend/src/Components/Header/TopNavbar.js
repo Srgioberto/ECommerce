@@ -77,6 +77,9 @@ const TopNavbar = () => {
                     <Link to="/orders" className="text-capitalize dropdown-item">
                       Manage Orders
                     </Link>
+                    <Link to="/admin/users" className="text-capitalize dropdown-item">
+                      Manage Users
+                    </Link>
                     <Link to="/" onClick={handleLogout} className="text-capitalize dropdown-item">
                       Log Out
                     </Link>

@@ -41,7 +41,8 @@
   width: 76px;
   height: 76px;
   object-fit: contain;
-  background: var(--paper-dim);
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   padding: 0.5rem;
 }

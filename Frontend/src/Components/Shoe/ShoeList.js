@@ -64,7 +64,7 @@ const ShoeList = ({ shoes, onEdit, onDelete }) => {
                       <img
                         src={getProductImageUrl(shoe.image)}
                         alt={shoe.name}
-                        style={{ width: "44px", height: "44px", objectFit: "contain", background: "var(--paper-dim)", borderRadius: "var(--radius-sm)" }}
+                        style={{ width: "44px", height: "44px", objectFit: "contain", background: "var(--surface)", border: "1px solid var(--line)", borderRadius: "var(--radius-sm)" }}
                       />
                     </td>
                     <td>{shoe.name}</td>
