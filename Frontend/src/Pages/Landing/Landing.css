@@ -2,6 +2,14 @@
   background: var(--paper);
 }
 
+/* The final CTA band is already ink, same as the footer - the footer's
+   default top margin (meant to give it breathing room after a paper-colored
+   section) instead left a bare paper-colored seam between two dark blocks. */
+.land-shell .stride-footer {
+  margin-top: 0;
+  border-top: 1px solid rgba(247, 245, 239, 0.12);
+}
+
 /* ---- nav --------------------------------------------------------- */
 
 .land-nav {
@@ -34,22 +42,83 @@
   color: var(--paper);
 }
 
-/* ---- hero: the shoebox lid ---------------------------------------- */
+/* ---- hero: the shoebox lid ------------------------------------------
+   The lid and the "inside the box" layer both fill the pinned viewport,
+   stacked with the lid on top. As the wrapper scrolls past underneath the
+   sticky pin, progress goes 0 -> 1 and the lid slides straight up and off,
+   revealing the layer beneath - a literal box opening, not a decoration. */
 
-.land-hero {
+.land-hero-wrap {
   position: relative;
+  height: 175vh;
+}
+
+.land-hero-pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.land-hero-inside,
+.land-hero-lid {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.land-hero-inside {
+  z-index: 1;
+  background: var(--paper);
+  text-align: center;
+}
+
+.land-hero-inside-label {
+  color: var(--stamp);
+  margin-bottom: 1rem;
+}
+
+.land-hero-inside-photos {
+  display: flex;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.land-hero-inside-photo {
+  width: clamp(88px, 16vw, 140px);
+  aspect-ratio: 1 / 1;
+  padding: 0.85rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  box-shadow: var(--shadow-pop);
+  will-change: transform, opacity;
+}
+
+.land-hero-inside-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.land-hero-lid {
+  z-index: 2;
   background: var(--kraft);
   background-image: repeating-linear-gradient(
     135deg,
     rgba(20, 19, 15, 0.035) 0 2px,
     transparent 2px 13px
   );
-  padding: clamp(3.5rem, 9vw, 7rem) 1.5rem clamp(2.5rem, 6vw, 4rem);
+  will-change: transform;
 }
 
-.land-hero-lid {
+.land-hero-lid-inner {
   max-width: 760px;
-  margin: 0 auto;
+  width: 100%;
 }
 
 .land-hero-eyebrow {
@@ -117,15 +186,38 @@
   border-color: rgba(20, 19, 15, 0.45);
 }
 
+.land-hero-scroll-cue {
+  margin-top: 1.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  opacity: 0.7;
+  animation: land-cue-bob 1.8s ease-in-out infinite;
+}
+
+@keyframes land-cue-bob {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+
+.land-hero-tear {
+  position: absolute;
+  left: 1.5rem;
+  right: 1.5rem;
+  bottom: clamp(1.5rem, 4vw, 2.5rem);
+}
+
 .land-hero-stat {
   font-size: 0.75rem;
   letter-spacing: 0.04em;
   color: var(--ink-soft);
-}
-
-.land-hero-tear {
-  max-width: 1140px;
-  margin: clamp(2.5rem, 6vw, 4rem) auto 0;
+  will-change: transform, opacity;
 }
 
 /* ---- ticker -------------------------------------------------------- */
@@ -346,5 +438,35 @@
   .land-hero-title span {
     opacity: 1;
     transform: none;
+  }
+
+  /* The scroll-driven lid slide is the one effect that isn't just decoration
+     - without it the lid would render already off-screen (its resting
+     inline transform reflects a fully "scrolled" state). Collapse back to a
+     single static hero instead: no pinning, no hidden layer underneath. */
+  .land-hero-wrap,
+  .land-hero-pin {
+    position: static;
+    height: auto;
+  }
+
+  .land-hero-inside {
+    display: none;
+  }
+
+  .land-hero-lid {
+    position: static;
+    transform: none !important;
+    padding: clamp(3.5rem, 9vw, 7rem) 1.5rem clamp(2.5rem, 6vw, 4rem);
+  }
+
+  .land-hero-tear {
+    position: static;
+    max-width: 1140px;
+    margin: clamp(2.5rem, 6vw, 4rem) auto 0;
+  }
+
+  .land-hero-scroll-cue {
+    display: none;
   }
 }
