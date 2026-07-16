@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import store from "../../Redux/Store";
 import { userOrdersFetch } from "../../Redux/Order/OrderSlice";
 import Pagination from "../../Components/Pagination/Pagination";
+import AddressManager from "../../Components/Profile/AddressManager";
+import PaymentMethodManager from "../../Components/Profile/PaymentMethodManager";
 
 const UserProfile = () => {
   const orders = useSelector((state) => state.orders);
@@ -97,6 +99,23 @@ const UserProfile = () => {
                     setCurrentPage={setCurrentPage}
                     currentPage={currentPage}
                   />
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+
+          <Row className="g-3 mt-1">
+            <Col lg={6}>
+              <Card>
+                <Card.Body>
+                  <AddressManager />
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col lg={6}>
+              <Card>
+                <Card.Body>
+                  <PaymentMethodManager />
                 </Card.Body>
               </Card>
             </Col>

@@ -1,4 +1,4 @@
-const { Order, OrderItem, Product } = require('../config');
+const { Order, OrderItem, Product, PaymentMethod } = require('../config');
 const cartService = require('./cart');
 
 class OrderService {
@@ -11,6 +11,19 @@ class OrderService {
       //If not, then we throw the error.
       throw new Error('Cart has no items');
     } else {
+      // The payment method must belong to the buyer - it's only a display
+      // snapshot for now (no gateway to charge yet), but still scoped so one
+      // user can't reference another's saved card by guessing its id.
+      let paymentMethod = null;
+      if (data.PaymentMethodId) {
+        paymentMethod = await PaymentMethod.findOne({
+          where: { id: data.PaymentMethodId, UserId: data.UserId },
+        });
+        if (!paymentMethod) {
+          throw new Error('Payment method not found');
+        }
+      }
+
       //If it has items, then we create the order adding the User id as FK
       const order = Order.build({
         status: 'confirmed',
@@ -22,6 +35,9 @@ class OrderService {
         province: data.province,
         city: data.city,
         country: data.country,
+        PaymentMethodId: paymentMethod?.id ?? null,
+        paymentBrand: paymentMethod?.brand ?? null,
+        paymentLast4: paymentMethod?.last4 ?? null,
       });
       await order.save();
 

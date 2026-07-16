@@ -19,21 +19,25 @@ export const userOrdersFetch = createAsyncThunk("orders/userOrdersFetch", async 
   }
 });
 
-export const createOrder = createAsyncThunk("order/createOrder", async (formData) => {
-  try {
-    const { data } = await axios.post("http://localhost:3000/api/orders", {
-      address1: formData.address1,
-      address2: formData.address2,
-      province: formData.province,
-      city: formData.city,
-      country: formData.country,
-    });
-    console.log(data);
-    return data;
-  } catch (error) {
-    console.error(error.name + " on create Order: " + error.message + " " + error.code);
+export const createOrder = createAsyncThunk(
+  "order/createOrder",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post("http://localhost:3000/api/orders", {
+        address1: formData.address1,
+        address2: formData.address2,
+        province: formData.province,
+        city: formData.city,
+        country: formData.country,
+        PaymentMethodId: formData.PaymentMethodId || undefined,
+      });
+      return data;
+    } catch (error) {
+      console.error(error.name + " on create Order: " + error.message + " " + error.code);
+      return rejectWithValue(error.response?.data?.error || error.message);
+    }
   }
-});
+);
 
 export const updateOrder = createAsyncThunk("order/admin/updateOrder", async (update) => {
   try {
@@ -105,7 +109,7 @@ const OrderSlice = createSlice({
     });
     builder.addCase(createOrder.rejected, (state, action) => {
       state.isLoading = false;
-      state.error = action.error.message;
+      state.error = action.payload || action.error.message;
     });
     //Update order
     builder.addCase(updateOrder.pending, (state, action) => {

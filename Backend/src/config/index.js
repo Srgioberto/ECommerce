@@ -25,8 +25,10 @@ db.Order = require('../models/Order.js')(sequelize);
 db.Product = require('../models/Product.js')(sequelize);
 db.CartItem = require('../models/CartItem.js')(sequelize);
 db.OrderItem = require('../models/OrderItem.js')(sequelize);
+db.Address = require('../models/Address.js')(sequelize);
+db.PaymentMethod = require('../models/PaymentMethod.js')(sequelize);
 
-const { User, Cart, Category, Order, Product, CartItem, OrderItem } =
+const { User, Cart, Category, Order, Product, CartItem, OrderItem, Address, PaymentMethod } =
   sequelize.models;
 
 // 1 User - 1 Cart
@@ -59,5 +61,19 @@ OrderItem.belongsTo(Order);
 // 1 Product- M OrderItem
 Product.hasMany(OrderItem);
 OrderItem.belongsTo(Product);
+
+// 1 User - M Address
+User.hasMany(Address, { onDelete: 'CASCADE' });
+Address.belongsTo(User);
+
+// 1 User - M PaymentMethod
+User.hasMany(PaymentMethod, { onDelete: 'CASCADE' });
+PaymentMethod.belongsTo(User);
+
+// The payment method used on an order is kept as a reference for whenever a
+// real gateway is wired in, but must never block deleting the saved method -
+// the order's own paymentBrand/paymentLast4 snapshot is what stays durable.
+PaymentMethod.hasMany(Order, { onDelete: 'SET NULL' });
+Order.belongsTo(PaymentMethod);
 
 module.exports = { ...sequelize.models, db };

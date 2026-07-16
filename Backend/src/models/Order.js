@@ -42,4 +42,16 @@ module.exports = (sequelize) =>
       type: DataTypes.STRING(50),
       allowNull: true,
     },
+    // Snapshot of the payment method chosen at checkout, kept even if the
+    // saved PaymentMethod record itself is later edited or removed (the
+    // PaymentMethodId FK, added via association, is nullable and SET NULL on
+    // delete for that reason - these two fields are the durable record).
+    paymentBrand: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+    },
+    paymentLast4: {
+      type: DataTypes.STRING(4),
+      allowNull: true,
+    },
   });

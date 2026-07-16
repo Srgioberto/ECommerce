@@ -8,6 +8,8 @@ import { persistReducer } from "redux-persist";
 import { combineReducers } from "@reduxjs/toolkit";
 import UserSlice from "./User/UserSlice";
 import AdminUserSlice from "./AdminUsers/AdminUserSlice";
+import AddressSlice from "./Address/AddressSlice";
+import PaymentMethodSlice from "./PaymentMethod/PaymentMethodSlice";
 
 const persistConfig = {
   key: "root",
@@ -23,6 +25,8 @@ const rootReducer = combineReducers({
   orders: OrderSlice,
   user: UserSlice,
   adminUsers: AdminUserSlice,
+  addresses: AddressSlice,
+  paymentMethods: PaymentMethodSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
