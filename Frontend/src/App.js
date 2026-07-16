@@ -1,10 +1,11 @@
 import Home from "./Pages/Home";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import NotFound from "./Pages/NotFound";
 import Products from "./Pages/Products/Products";
 import SpecificCategory from "./Pages/Products/SpecificCategory";
 import ShoeManager from "./Pages/Shoes/ShoeManager";
 import AdminUsers from "./Pages/Admin/AdminUsers";
+import Landing from "./Pages/Landing/Landing";
 import OrderList from "./Pages/Orders/OrderList";
 import OrderDetail from "./Pages/Orders/OrderDetail";
 import Cart from "./Pages/Cart/Cart";
@@ -25,7 +26,7 @@ function App() {
   return (
     <CartDrawerProvider>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/Register" element={<Register />} />
         <Route element={<ProtectedRoutesUser />}>
