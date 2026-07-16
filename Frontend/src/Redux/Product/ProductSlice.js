@@ -60,14 +60,18 @@ export const updateProduct = createAsyncThunk(
   }
 );
 
-export const deleteProduct = createAsyncThunk("order/admin/deleteProduct", async (id) => {
-  try {
-    const { data } = await axios.delete("http://localhost:3000/api/admin/products/" + id);
-    return data;
-  } catch (error) {
-    console.error(error.name + " on delete product: " + error.message + " " + error.code);
+export const deleteProduct = createAsyncThunk(
+  "order/admin/deleteProduct",
+  async (id, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.delete("http://localhost:3000/api/admin/products/" + id);
+      return data;
+    } catch (error) {
+      console.error(error.name + " on delete product: " + error.message + " " + error.code);
+      return rejectWithValue(error.response?.data?.error || error.message);
+    }
   }
-});
+);
 
 const ProductSlice = createSlice({
   name: "products",
@@ -129,18 +133,17 @@ const ProductSlice = createSlice({
     });
     builder.addCase(deleteProduct.fulfilled, (state, action) => {
       state.isLoading = false;
+      const index = state.products.findIndex((product) => product.id === action.payload.product.id);
       if (action.payload.deleted) {
-        const index = state.products.findIndex((product) => product.id === action.payload.id);
         state.products.splice(index, 1);
       } else {
-        const index = state.products.findIndex((product) => product.id === action.payload.product.id);
         state.products[index] = action.payload.product;
       }
       state.error = null;
     });
     builder.addCase(deleteProduct.rejected, (state, action) => {
       state.isLoading = false;
-      state.error = action.error.message;
+      state.error = action.payload || action.error.message;
     });
   },
 });

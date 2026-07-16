@@ -5,12 +5,15 @@
 
 .login-container {
     min-height: calc(100vh - 66px);
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
     background-size: cover;
     background-position: center;
     background-image: linear-gradient(rgba(20, 19, 15, 0.55), rgba(20, 19, 15, 0.55)), url('/public/img/Login/Login2.jpg');
+}
+
+.login-content {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
     padding-top: 7%;
 }
 
@@ -48,7 +51,7 @@
 }
 
 @media (max-width: 576px) {
-    .login-container {
+    .login-content {
         padding: 1rem;
     }
 

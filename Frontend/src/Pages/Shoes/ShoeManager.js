@@ -31,9 +31,7 @@ const ShoeManager = () => {
     return result;
   };
 
-  const deleteShoe = (id) => {
-    dispatch(deleteProduct(id));
-  };
+  const deleteShoe = (id) => dispatch(deleteProduct(id));
 
   const editShoe = (shoe) => {
     setCurrentShoe(shoe);

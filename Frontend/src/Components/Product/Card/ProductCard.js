@@ -45,9 +45,9 @@ const ProductCard = ({ product }) => {
               className={styles.quickAdd}
               onClick={handleQuickAdd}
               disabled={adding}
-              aria-label={`Quick add ${product.name} to bag`}
+              aria-label={`Quick add ${product.name} to cart`}
             >
-              {adding ? "..." : "+ Bag"}
+              {adding ? "..." : "+ Cart"}
             </button>
           )}
         </div>

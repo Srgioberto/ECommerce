@@ -12,15 +12,30 @@ const ShoeList = ({ shoes, onEdit, onDelete }) => {
 
   //Modal
   const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+  const handleClose = () => {
+    setShow(false);
+    setDeleteError("");
+  };
   const handleShow = (shoe) => {
     setShoe(shoe);
+    setDeleteError("");
     setShow(true);
   };
   const handleConfirm = (e) => {
     e.preventDefault();
-    onDelete(shoe.id);
-    handleClose();
+    setDeleting(true);
+    onDelete(shoe.id)
+      .unwrap()
+      .then(() => {
+        setDeleting(false);
+        handleClose();
+      })
+      .catch((error) => {
+        setDeleting(false);
+        setDeleteError(typeof error === "string" ? error : "Could not delete this product.");
+      });
   };
 
   //Pagination
@@ -116,13 +131,14 @@ const ShoeList = ({ shoes, onEdit, onDelete }) => {
           <b>Are you sure about making this changes?</b>
           <br />
           *If the item is already on a confirmed Order instead of deleting the item, the stock will be set to 0.
+          {deleteError && <div className="text-danger mt-2">{deleteError}</div>}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="secondary" onClick={handleClose} disabled={deleting}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleConfirm}>
-            Yes, I understand
+          <Button variant="primary" onClick={handleConfirm} disabled={deleting}>
+            {deleting ? "Deleting..." : "Yes, I understand"}
           </Button>
         </Modal.Footer>
       </Modal>

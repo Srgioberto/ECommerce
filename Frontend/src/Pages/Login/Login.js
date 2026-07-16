@@ -64,7 +64,7 @@ const Login = () => {
         </Container>
       </Navbar>
       <div className="login-container d-flex flex-column min-vh-100">
-        <Container fluid className="flex-fill">
+        <Container fluid className="flex-fill login-content">
           <Row className="w-100">
           <Col xs={10} sm={8} md={6} lg={4} className="left-align">
               <Card className="p-4 shadow-lg login-card">
