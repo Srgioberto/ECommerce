@@ -1,16 +1,17 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export const cartFetch = createAsyncThunk("cart/cartFetch", async () => {
+export const cartFetch = createAsyncThunk("cart/cartFetch", async (_, { rejectWithValue }) => {
   try {
     const { data } = await axios.get("http://localhost:3000/api/cart");
     return data;
   } catch (error) {
     console.error(error.name + " on GET cart: " + error.message + " " + error.code);
+    return rejectWithValue(error.response?.data?.error || error.message);
   }
 });
 
-export const addItem = createAsyncThunk("cart/addItem", async (info) => {
+export const addItem = createAsyncThunk("cart/addItem", async (info, { rejectWithValue }) => {
   try {
     let quantity = info.cartItem.qty;
     if (info.mode === "plus") {
@@ -26,19 +27,21 @@ export const addItem = createAsyncThunk("cart/addItem", async (info) => {
     return data;
   } catch (error) {
     console.error(error.name + " on addItem cart: " + error.message + " " + error.code);
+    return rejectWithValue(error.response?.data?.error || error.message);
   }
 });
 
-export const emptyCart = createAsyncThunk("cart/emptyCart", async (data) => {
+export const emptyCart = createAsyncThunk("cart/emptyCart", async (data, { rejectWithValue }) => {
   try {
     const { data } = await axios.put("http://localhost:3000/api/cart/clear");
     return data;
   } catch (error) {
     console.error(error.name + " on empty cart: " + error.message + " " + error.code);
+    return rejectWithValue(error.response?.data?.error || error.message);
   }
 });
 
-export const removeItem = createAsyncThunk("cart/removeItem", async (cartItem) => {
+export const removeItem = createAsyncThunk("cart/removeItem", async (cartItem, { rejectWithValue }) => {
   try {
     const { data } = await axios.delete("http://localhost:3000/api/cart", {
       data: {
@@ -49,6 +52,7 @@ export const removeItem = createAsyncThunk("cart/removeItem", async (cartItem) =
     return data;
   } catch (error) {
     console.error(error.name + " on removeItem cart: " + error.message + " " + error.code);
+    return rejectWithValue(error.response?.data?.error || error.message);
   }
 });
 
@@ -160,8 +164,7 @@ const CartSlice = createSlice({
     });
     builder.addCase(cartFetch.rejected, (state, action) => {
       state.isLoading = false;
-      state.CartItems = [];
-      state.error = action.error.message;
+      state.error = action.payload || action.error.message;
     });
 
     //Add to Cart
@@ -177,8 +180,7 @@ const CartSlice = createSlice({
     });
     builder.addCase(addItem.rejected, (state, action) => {
       state.isLoading = false;
-      state.CartItems = [];
-      state.error = action.error.message;
+      state.error = action.payload || action.error.message;
     });
 
     //Empty Cart
@@ -194,8 +196,7 @@ const CartSlice = createSlice({
     });
     builder.addCase(emptyCart.rejected, (state, action) => {
       state.isLoading = false;
-      state.CartItems = [];
-      state.error = action.error.message;
+      state.error = action.payload || action.error.message;
     });
 
     //Remove Item from Cart
@@ -211,8 +212,7 @@ const CartSlice = createSlice({
     });
     builder.addCase(removeItem.rejected, (state, action) => {
       state.isLoading = false;
-      state.CartItems = [];
-      state.error = action.error.message;
+      state.error = action.payload || action.error.message;
     });
   },
 });

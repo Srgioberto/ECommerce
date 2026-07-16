@@ -82,13 +82,26 @@ class CartService {
         size: data.size ?? null,
       },
     });
-    // Get the product price
-    const { price: productPrice } = await Product.findByPk(data.ProductId);
+    const product = await Product.findByPk(data.ProductId);
+    if (!product) {
+      throw new Error('Product not found');
+    }
+    // data.qty is the target quantity for this line item (not a delta), so
+    // it must never exceed the stock of the specific size chosen (or the
+    // product's total stock for sizeless items) - checked here rather than
+    // trusting the client, since this is the only place that can't be
+    // bypassed.
+    const sizes = Array.isArray(product.sizes) ? product.sizes : [];
+    const availableStock =
+      sizes.length > 0 ? sizes.find((s) => s.size === data.size)?.stock ?? 0 : product.stock;
+    if (data.qty > availableStock) {
+      throw new Error('Not enough stock for that selection');
+    }
     if (!exists) {
       //item doesn't exists in the cart -> building item and saving it on DB, update to Cart total
       const item = await CartItem.build({
         qty: data.qty,
-        price: productPrice,
+        price: product.price,
         CartId: data.CartId,
         ProductId: data.ProductId,
         size: data.size ?? null,

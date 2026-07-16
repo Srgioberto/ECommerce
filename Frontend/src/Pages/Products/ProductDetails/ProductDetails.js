@@ -43,10 +43,21 @@ const ProductDetails = () => {
     dispatch(productsFetch());
   }, [dispatch]);
 
+  // Quantity is capped by the stock of the chosen size, not the product's
+  // total stock across all sizes - otherwise you could add more of a size
+  // than actually exists as long as some other size still had stock left.
+  const availableStock =
+    sizes.length > 0 ? sizes.find((s) => s.size === selectedSize)?.stock ?? 0 : product?.stock ?? 0;
+
+  // A previous quantity may no longer fit once the size changes, so reset it.
+  useEffect(() => {
+    setQuantity(1);
+  }, [selectedSize]);
+
   // Increase item quantity, but not above the available stock value
   const increaseQty = (e) => {
     e.preventDefault();
-    if (quantity < product.stock) {
+    if (quantity < availableStock) {
       setQuantity(quantity + 1); // Incrementar la cantidad correctamente
     }
   };
