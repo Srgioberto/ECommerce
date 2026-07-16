@@ -84,25 +84,81 @@
 
 .land-hero-inside-photos {
   display: flex;
-  gap: 1.25rem;
+  gap: clamp(1rem, 3vw, 2.25rem);
   margin-bottom: 1.5rem;
 }
 
+.land-hero-inside-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  color: var(--ink);
+  will-change: transform, opacity;
+  transition: transform 0.2s ease;
+}
+
 .land-hero-inside-photo {
-  width: clamp(88px, 16vw, 140px);
+  position: relative;
+  width: clamp(120px, 20vw, 200px);
   aspect-ratio: 1 / 1;
-  padding: 0.85rem;
+  padding: clamp(1rem, 2.5vw, 1.5rem);
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 50%;
   box-shadow: var(--shadow-pop);
-  will-change: transform, opacity;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.land-hero-inside-photo::after {
+  content: "View →";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(20, 19, 15, 0.72);
+  color: var(--paper);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.land-hero-inside-item:hover,
+.land-hero-inside-item:focus-visible {
+  transform: translateY(-6px) rotate(0deg) !important;
+}
+
+.land-hero-inside-item:hover .land-hero-inside-photo,
+.land-hero-inside-item:focus-visible .land-hero-inside-photo {
+  border-color: var(--stamp);
+  box-shadow: var(--shadow-pop), 0 0 0 3px rgba(232, 72, 44, 0.15);
+}
+
+.land-hero-inside-item:hover .land-hero-inside-photo::after,
+.land-hero-inside-item:focus-visible .land-hero-inside-photo::after {
+  opacity: 1;
 }
 
 .land-hero-inside-photo img {
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+.land-hero-inside-caption {
+  max-width: clamp(120px, 20vw, 200px);
+  font-size: 0.65rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .land-hero-lid {

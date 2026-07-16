@@ -106,22 +106,28 @@ const Landing = () => {
       <section className="land-hero-wrap" ref={heroWrapRef}>
         <div className="land-hero-pin">
           <div className="land-hero-inside">
-            <span className="sku land-hero-inside-label">Inside the box</span>
+            <span className="sku land-hero-inside-label">Inside the box — tap a pair to shop it</span>
             {peek.length > 0 && (
               <div className="land-hero-inside-photos">
                 {peek.map((product, i) => {
                   const itemReveal = remap(progress, 0.15 + i * 0.06, 0.6 + i * 0.06);
                   return (
-                    <div
+                    <Link
+                      to="/login"
                       key={product.id}
-                      className="land-hero-inside-photo"
+                      className="land-hero-inside-item"
                       style={{
                         opacity: itemReveal,
-                        transform: `translateY(${(1 - itemReveal) * 36}px) rotate(${(i - 1) * 4}deg)`,
+                        transform: `translateY(${(1 - itemReveal) * 36}px) rotate(${(i - 1) * 3}deg)`,
                       }}
                     >
-                      <img src={getProductImageUrl(product.image)} alt={product.name} />
-                    </div>
+                      <span className="land-hero-inside-photo">
+                        <img src={getProductImageUrl(product.image)} alt={product.name} />
+                      </span>
+                      <span className="land-hero-inside-caption font-mono">
+                        {product.name} · ${product.price}
+                      </span>
+                    </Link>
                   );
                 })}
               </div>
